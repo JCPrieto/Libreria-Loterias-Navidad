@@ -2,6 +2,8 @@ package com.jklabs.lib.loteria.model;
 
 import com.jklabs.lib.loteria.service.Resultado;
 
+import java.util.Date;
+
 /**
  * Created by juanky on 21/03/15.
  */
@@ -29,7 +31,7 @@ public class ResultadosNino extends Resultado {
         return tratarArray(this.valores.get(9));
     }
 
-    public String getFecha() {
+    public Date getFecha() {
         return tratarFecha(this.valores.get(0));
     }
 

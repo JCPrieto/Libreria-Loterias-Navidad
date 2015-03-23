@@ -66,13 +66,12 @@ public class Resultado {
         return cadena;
     }
 
-    protected String tratarFecha(String string) {
+    protected Date tratarFecha(String string) {
         DecimalFormat mFormat = new DecimalFormat("00");
         Calendar date = Calendar.getInstance();
         int time = Integer.parseInt(string);
         date.setTimeInMillis(time * 1000L);
-        return date.get(Calendar.DAY_OF_MONTH) + "-" + (date.get(Calendar.MONTH) + 1) + "-" + date.get(Calendar.YEAR) + " " +
-                mFormat.format(date.get(Calendar.HOUR_OF_DAY)) + ":" + mFormat.format(date.get(Calendar.MINUTE));
+        return date.getTime();
     }
 
     protected String tratarNumero(String string) {

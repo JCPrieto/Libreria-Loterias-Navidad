@@ -2,6 +2,8 @@ package com.jklabs.lib.loteria.model;
 
 import com.jklabs.lib.loteria.service.Resultado;
 
+import java.util.Date;
+
 /**
  * Created by juanky on 20/03/15.
  */
@@ -23,7 +25,7 @@ public class ResultadosNavidad extends Resultado {
         return tratarEstado(this.valores.get(1));
     }
 
-    public String getFecha() {
+    public Date getFecha() {
         return tratarFecha(this.valores.get(0));
     }
 
