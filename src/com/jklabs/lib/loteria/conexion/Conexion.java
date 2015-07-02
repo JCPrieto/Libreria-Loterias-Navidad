@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
@@ -42,8 +41,6 @@ public class Conexion {
                 noError = true;
                 this.resultado = res[1];
             }
-        } catch (MalformedURLException e) {
-            Logger.getLogger("Conexion").log(Level.SEVERE, "Error Critico", e);
         } catch (IOException e) {
             Logger.getLogger("Conexion").log(Level.SEVERE, "Error Critico", e);
         }
@@ -89,11 +86,7 @@ public class Conexion {
             Map json = (Map) parser.parse(string, containerFactory);
             Iterator iter = json.entrySet().iterator();
             Map.Entry entry = (Map.Entry) iter.next();
-            if (entry.getKey().equals("error")) {
-                error = true;
-            } else {
-                error = false;
-            }
+            error = entry.getKey().equals("error");
         } catch (ParseException e) {
             Logger.getLogger("Conexion").log(Level.SEVERE, "Error Critico", e);
         }

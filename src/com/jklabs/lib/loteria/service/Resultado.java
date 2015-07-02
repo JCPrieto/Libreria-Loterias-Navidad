@@ -4,7 +4,6 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.text.DecimalFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +29,7 @@ public class Resultado {
         try {
             Map json = (Map) parser.parse(consulta, containerFactory);
             Iterator iter = json.entrySet().iterator();
-            this.valores = new ArrayList();
+            this.valores = new ArrayList<String>();
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 this.valores.add(entry.getValue().toString());
@@ -67,7 +66,6 @@ public class Resultado {
     }
 
     protected Date tratarFecha(String string) {
-        DecimalFormat mFormat = new DecimalFormat("00");
         Calendar date = Calendar.getInstance();
         int time = Integer.parseInt(string);
         date.setTimeInMillis(time * 1000L);
