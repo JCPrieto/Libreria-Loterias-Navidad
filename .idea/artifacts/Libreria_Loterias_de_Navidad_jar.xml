@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Libreria_Loterias_de_Navidad_jar</output-path>
     <root id="archive" name="Libreria Loterias de Navidad.jar">
       <element id="module-output" name="Libreria Loterias de Navidad" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../../libs/json-simple-1.1.1.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
