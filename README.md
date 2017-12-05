@@ -1,0 +1,4 @@
+# Libreria-Loterias-Navidad
+Librería de conexión con la Api de El País para obtener los resultados de las Loterías de Navidad y de El Niño
+
+Actualmente esta librería está en uso en 2 aplicaciones de mi repositorio: LoteríasJava y LoteríasAndroid.
