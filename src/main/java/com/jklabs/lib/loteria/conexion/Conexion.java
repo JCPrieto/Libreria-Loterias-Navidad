@@ -17,8 +17,9 @@ import java.util.logging.Logger;
  * Created by juanky on 20/03/15.
  */
 public class Conexion {
-    private final transient String url;
-    private transient String resultado;
+
+    private final String url;
+    private String resultado;
 
     public Conexion(String string, String string2) {
         this.url = "http://api.elpais.com/ws/Loteria" + string + "Premiados?n="

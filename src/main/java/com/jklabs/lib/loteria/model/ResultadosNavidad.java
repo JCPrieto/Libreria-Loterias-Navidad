@@ -14,67 +14,67 @@ public class ResultadosNavidad extends Resultado {
     }
 
     public String getCuarto1() {
-        return tratarNumero(this.valores.get(5));
+        return tratarNumero(this.getValores().get(5));
     }
 
     public String getCuarto2() {
-        return tratarNumero(this.valores.get(6));
+        return tratarNumero(this.getValores().get(6));
     }
 
     public String getEstado() {
-        return tratarEstado(this.valores.get(1));
+        return tratarEstado(this.getValores().get(1));
     }
 
     public Date getFecha() {
-        return tratarFecha(this.valores.get(0));
+        return tratarFecha(this.getValores().get(0));
     }
 
     public String getGordo() {
-        return tratarNumero(this.valores.get(2));
+        return tratarNumero(this.getValores().get(2));
     }
 
     public String getPDF() {
-        return this.valores.get(17);
+        return this.getValores().get(17);
     }
 
     public String getQuinto1() {
-        return tratarNumero(this.valores.get(7));
+        return tratarNumero(this.getValores().get(7));
     }
 
     public String getQuinto2() {
-        return tratarNumero(this.valores.get(8));
+        return tratarNumero(this.getValores().get(8));
     }
 
     public String getQuinto3() {
-        return tratarNumero(this.valores.get(9));
+        return tratarNumero(this.getValores().get(9));
     }
 
     public String getQuinto4() {
-        return tratarNumero(this.valores.get(10));
+        return tratarNumero(this.getValores().get(10));
     }
 
     public String getQuinto5() {
-        return tratarNumero(this.valores.get(11));
+        return tratarNumero(this.getValores().get(11));
     }
 
     public String getQuinto6() {
-        return tratarNumero(this.valores.get(12));
+        return tratarNumero(this.getValores().get(12));
     }
 
     public String getQuinto7() {
-        return tratarNumero(this.valores.get(13));
+        return tratarNumero(this.getValores().get(13));
     }
 
     public String getQuinto8() {
-        return tratarNumero(this.valores.get(14));
+        return tratarNumero(this.getValores().get(14));
     }
 
     public String getSegundo() {
-        return tratarNumero(this.valores.get(3));
+        return tratarNumero(this.getValores().get(3));
     }
 
     public String getTercero() {
-        return tratarNumero(this.valores.get(4));
+        return tratarNumero(this.getValores().get(4));
     }
 
 }

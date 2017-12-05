@@ -14,64 +14,64 @@ public class ResultadosNino extends Resultado {
     }
 
     public String getEstado() {
-        return tratarEstado(this.valores.get(1));
+        return tratarEstado(this.getValores().get(1));
     }
 
     /**
      * @return Las extracciones de 2 cifras
      */
     public String[] getExtraccionDos() {
-        return tratarArray(this.valores.get(10));
+        return tratarArray(this.getValores().get(10));
     }
 
     /**
      * @return Las extracciones de 3 cifras
      */
     public String[] getExtraccionTres() {
-        return tratarArray(this.valores.get(9));
+        return tratarArray(this.getValores().get(9));
     }
 
     public Date getFecha() {
-        return tratarFecha(this.valores.get(0));
+        return tratarFecha(this.getValores().get(0));
     }
 
     public String getPDF() {
-        return this.valores.get(3);
+        return this.getValores().get(3);
     }
 
     /**
      * @return Primer Premio
      */
     public String getPrimero() {
-        return tratarNumero(this.valores.get(5));
+        return tratarNumero(this.getValores().get(5));
     }
 
     /**
      * @return Reitegros
      */
     public String[] getReintegros() {
-        return tratarArray(this.valores.get(11));
+        return tratarArray(this.getValores().get(11));
     }
 
     /**
      * @return Segundo Premio
      */
     public String getSegundo() {
-        return tratarNumero(this.valores.get(6));
+        return tratarNumero(this.getValores().get(6));
     }
 
     /**
      * @return Tercer premio
      */
     public String getTercero() {
-        return tratarNumero(this.valores.get(7));
+        return tratarNumero(this.getValores().get(7));
     }
 
     /**
      * @return Extracciones de 4 cifras.
      */
     public String[] getExtraccionCuatro() {
-        return tratarArray(this.valores.get(8));
+        return tratarArray(this.getValores().get(8));
     }
 
     /**

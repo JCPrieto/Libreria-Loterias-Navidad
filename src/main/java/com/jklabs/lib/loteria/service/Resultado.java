@@ -4,6 +4,7 @@ import org.json.simple.parser.ContainerFactory;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,8 +12,10 @@ import java.util.logging.Logger;
 /**
  * Created by juanky on 20/03/15.
  */
-public class Resultado {
-    protected transient List<String> valores;
+public class Resultado implements Serializable {
+
+    private static final long serialVersionUID = -6803813672470981012L;
+    private List<String> valores;
 
     public Resultado(String consulta) {
         JSONParser parser = new JSONParser();
@@ -78,8 +81,13 @@ public class Resultado {
             cad = "-";
         else {
             cad = String.format("%05d",
-                    new Object[]{Integer.valueOf(Integer.parseInt(string))});
+                    Integer.parseInt(string));
         }
         return cad;
     }
+
+    protected List<String> getValores() {
+        return valores;
+    }
+
 }
