@@ -1,8 +1,12 @@
 package com.jklabs.lib.loteria.conexion;
 
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import es.jklabs.lib.loteria.constant.HttpResponseCode;
+import es.jklabs.lib.loteria.enumeradores.Sorteo;
+import es.jklabs.lib.loteria.model.navidad.ResumenNavidad;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +22,7 @@ import java.util.logging.Logger;
  */
 public class Conexion {
 
+    private static final String RESUMEN = "resumen";
     private final String url;
     private String resultado;
 
@@ -25,6 +30,16 @@ public class Conexion {
         this.url = "http://api.elpais.com/ws/Loteria" + string + "Premiados?n="
                 + eliminarCeros(string2);
         this.resultado = "";
+    }
+
+    public ResumenNavidad getResumenNavidad() throws IOException {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet("http://api.elpais.com/ws/Loteria" + Sorteo.NAVIDAD.getParametro() + "Premiados?n="
+                + RESUMEN);
+        HttpResponse response = client.execute(request);
+        if (Objects.equals(response.getStatusLine().getStatusCode(), HttpResponseCode.OK)) {
+
+        }
     }
 
     public boolean consulta() {
