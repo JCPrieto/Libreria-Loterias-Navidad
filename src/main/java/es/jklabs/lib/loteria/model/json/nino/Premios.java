@@ -2,7 +2,7 @@ package es.jklabs.lib.loteria.model.json.nino;
 
 public class Premios {
 
-    private String timestamp;
+    private long timestamp;
     private int status;
     private String fraseTexto;
     private String pdfURL;
@@ -10,20 +10,20 @@ public class Premios {
     private int premio1;
     private int premio2;
     private int premio3;
-    private int[] extracciones4cifras;
-    private int[] extracciones3cifras;
-    private int[] extracciones2cifras;
-    private int[] reintegros;
+    private String[] extracciones4cifras;
+    private String[] extracciones3cifras;
+    private String[] extracciones2cifras;
+    private String[] reintegros;
 
     public Premios() {
 
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -83,35 +83,35 @@ public class Premios {
         this.premio3 = premio3;
     }
 
-    public int[] getExtracciones4cifras() {
+    public String[] getExtracciones4cifras() {
         return extracciones4cifras;
     }
 
-    public void setExtracciones4cifras(int[] extracciones4cifras) {
+    public void setExtracciones4cifras(String[] extracciones4cifras) {
         this.extracciones4cifras = extracciones4cifras;
     }
 
-    public int[] getExtracciones3cifras() {
+    public String[] getExtracciones3cifras() {
         return extracciones3cifras;
     }
 
-    public void setExtracciones3cifras(int[] extracciones3cifras) {
+    public void setExtracciones3cifras(String[] extracciones3cifras) {
         this.extracciones3cifras = extracciones3cifras;
     }
 
-    public int[] getExtracciones2cifras() {
+    public String[] getExtracciones2cifras() {
         return extracciones2cifras;
     }
 
-    public void setExtracciones2cifras(int[] extracciones2cifras) {
+    public void setExtracciones2cifras(String[] extracciones2cifras) {
         this.extracciones2cifras = extracciones2cifras;
     }
 
-    public int[] getReintegros() {
+    public String[] getReintegros() {
         return reintegros;
     }
 
-    public void setReintegros(int[] reintegros) {
+    public void setReintegros(String[] reintegros) {
         this.reintegros = reintegros;
     }
 }

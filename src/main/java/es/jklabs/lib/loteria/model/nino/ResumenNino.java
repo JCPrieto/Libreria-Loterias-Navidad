@@ -1,26 +1,28 @@
-package es.jklabs.lib.loteria.model.navidad;
+package es.jklabs.lib.loteria.model.nino;
 
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ResumenNavidad {
-    private String gordo;
+public class ResumenNino {
+    private String primero;
     private String segundo;
     private String tercero;
-    private List<String> cuarto;
-    private List<String> quinto;
+    private List<String> cuatroCifras;
+    private List<String> tresCifras;
+    private List<String> dosCifras;
+    private List<String> reintegros;
     private LocalDateTime fechaActualizacion;
     private String urlPDF;
     private EstadoSorteo estado;
 
-    public String getGordo() {
-        return gordo;
+    public String getPrimero() {
+        return primero;
     }
 
-    public void setGordo(String gordo) {
-        this.gordo = gordo;
+    public void setPrimero(String primero) {
+        this.primero = primero;
     }
 
     public String getSegundo() {
@@ -39,20 +41,36 @@ public class ResumenNavidad {
         this.tercero = tercero;
     }
 
-    public List<String> getCuarto() {
-        return cuarto;
+    public List<String> getCuatroCifras() {
+        return cuatroCifras;
     }
 
-    public void setCuarto(List<String> cuarto) {
-        this.cuarto = cuarto;
+    public void setCuatroCifras(List<String> cuatroCifras) {
+        this.cuatroCifras = cuatroCifras;
     }
 
-    public List<String> getQuinto() {
-        return quinto;
+    public List<String> getTresCifras() {
+        return tresCifras;
     }
 
-    public void setQuinto(List<String> quinto) {
-        this.quinto = quinto;
+    public void setTresCifras(List<String> tresCifras) {
+        this.tresCifras = tresCifras;
+    }
+
+    public List<String> getDosCifras() {
+        return dosCifras;
+    }
+
+    public void setDosCifras(List<String> dosCifras) {
+        this.dosCifras = dosCifras;
+    }
+
+    public List<String> getReintegros() {
+        return reintegros;
+    }
+
+    public void setReintegros(List<String> reintegros) {
+        this.reintegros = reintegros;
     }
 
     public LocalDateTime getFechaActualizacion() {

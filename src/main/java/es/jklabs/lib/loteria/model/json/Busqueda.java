@@ -9,7 +9,7 @@ public class Busqueda {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private int premio;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String timestamp;
+    private long timestamp;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private int status;
     private int error;
@@ -34,11 +34,11 @@ public class Busqueda {
         this.premio = premio;
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

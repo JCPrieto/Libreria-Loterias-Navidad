@@ -2,7 +2,7 @@ package es.jklabs.lib.loteria.model.json.navidad;
 
 public class Premios {
 
-    private String timestamp;
+    private long timestamp;
     private int status;
     private int numero1;
     private int numero2;
@@ -27,11 +27,11 @@ public class Premios {
 
     }
 
-    public String getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
