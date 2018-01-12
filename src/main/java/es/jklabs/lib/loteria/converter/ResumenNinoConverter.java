@@ -28,29 +28,29 @@ public class ResumenNinoConverter {
         }
         resumen.setCuatroCifras(new ArrayList<>());
         for (String extraccion : premios.getExtracciones4cifras()) {
-            if (extraccion != "-1") {
+            if (!extraccion.equals("-1")) {
                 resumen.getCuatroCifras().add(extraccion);
             }
         }
         resumen.setTresCifras(new ArrayList<>());
         for (String extraccion : premios.getExtracciones3cifras()) {
-            if (extraccion != "-1") {
+            if (!extraccion.equals("-1")) {
                 resumen.getTresCifras().add(extraccion);
             }
         }
         resumen.setDosCifras(new ArrayList<>());
         for (String extraccion : premios.getExtracciones2cifras()) {
-            if (extraccion != "-1") {
+            if (!extraccion.equals("-1")) {
                 resumen.getDosCifras().add(extraccion);
             }
         }
         resumen.setReintegros(new ArrayList<>());
         for (String extraccion : premios.getReintegros()) {
-            if (extraccion != "-1") {
+            if (!extraccion.equals("-1")) {
                 resumen.getReintegros().add(extraccion);
             }
         }
-        resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochMilli(premios.getTimestamp()), ZoneId
+        resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
                 .systemDefault()));
         resumen.setUrlPDF(premios.getPdfURL());
         resumen.setEstado(EstadoSorteo.get(premios.getStatus()));

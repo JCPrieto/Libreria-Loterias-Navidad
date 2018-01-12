@@ -21,7 +21,7 @@ public class PremioConverter {
         } else {
             premio.setCantidad(0D);
         }
-        premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochMilli(busqueda.getTimestamp()), ZoneId
+        premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(busqueda.getTimestamp()), ZoneId
                 .systemDefault()));
         premio.setEstado(EstadoSorteo.get(busqueda.getStatus()));
         return premio;

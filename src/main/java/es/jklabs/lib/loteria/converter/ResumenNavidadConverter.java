@@ -25,14 +25,23 @@ public class ResumenNavidadConverter {
         if (premios.getNumero3() > -1) {
             resumen.setTercero(String.format("%05d", premios.getNumero3()));
         }
-        resumen.setCuarto(new ArrayList<String>());
+        resumen.setCuarto(new ArrayList<>());
         if (premios.getNumero4() > -1) {
             resumen.getCuarto().add(String.format("%05d", premios.getNumero4()));
             if (premios.getNumero5() > -1) {
                 resumen.getCuarto().add(String.format("%05d", premios.getNumero5()));
             }
         }
-        resumen.setQuinto(new ArrayList<String>());
+        resumen.setQuinto(new ArrayList<>());
+        getQuintoPremio(premios, resumen);
+        resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
+                .systemDefault()));
+        resumen.setUrlPDF(premios.getListaPDF());
+        resumen.setEstado(EstadoSorteo.get(premios.getStatus()));
+        return resumen;
+    }
+
+    private static void getQuintoPremio(Premios premios, ResumenNavidad resumen) {
         if (premios.getNumero6() > -1) {
             resumen.getQuinto().add(String.format("%05d", premios.getNumero6()));
             if (premios.getNumero7() > -1) {
@@ -57,10 +66,5 @@ public class ResumenNavidadConverter {
                 }
             }
         }
-        resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochMilli(premios.getTimestamp()), ZoneId
-                .systemDefault()));
-        resumen.setUrlPDF(premios.getListaPDF());
-        resumen.setEstado(EstadoSorteo.get(premios.getStatus()));
-        return resumen;
     }
 }
