@@ -2,10 +2,13 @@ package es.jklabs.lib.loteria.model.navidad;
 
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ResumenNavidad {
+public class ResumenNavidad implements Serializable {
+
+    private static final long serialVersionUID = 4536837407643098849L;
     private String gordo;
     private String segundo;
     private String tercero;

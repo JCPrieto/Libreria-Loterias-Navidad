@@ -2,8 +2,8 @@ package es.jklabs.lib.loteria.enumeradores;
 
 public enum Sorteo {
 
-    NAVIDAD(""),
-    NINO("");
+    NAVIDAD("Navidad"),
+    NINO("Nino");
 
     private final String parametro;
 

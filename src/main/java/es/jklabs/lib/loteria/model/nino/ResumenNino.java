@@ -2,10 +2,13 @@ package es.jklabs.lib.loteria.model.nino;
 
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ResumenNino {
+public class ResumenNino implements Serializable {
+
+    private static final long serialVersionUID = -8842164079641350214L;
     private String primero;
     private String segundo;
     private String tercero;
