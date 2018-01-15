@@ -7,6 +7,7 @@ import es.jklabs.lib.loteria.model.json.Busqueda;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Calendar;
 
 public class PremioConverter {
 
@@ -21,8 +22,14 @@ public class PremioConverter {
         } else {
             premio.setCantidad(0D);
         }
-        premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(busqueda.getTimestamp()), ZoneId
-                .systemDefault()));
+        try {
+            premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(busqueda.getTimestamp()),
+                    ZoneId.of("Europe/Madrid")));
+        } catch (NoClassDefFoundError n) {
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(busqueda.getTimestamp() * 1000L);
+            premio.setFechaActualizacionAndroid(date.getTime());
+        }
         premio.setEstado(EstadoSorteo.get(busqueda.getStatus()));
         return premio;
     }

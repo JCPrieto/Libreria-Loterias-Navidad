@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ResumenNavidadConverter {
 
@@ -34,11 +35,21 @@ public class ResumenNavidadConverter {
         }
         resumen.setQuinto(new ArrayList<>());
         getQuintoPremio(premios, resumen);
-        resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
-                .systemDefault()));
+        setFechaActualizacion(premios, resumen);
         resumen.setUrlPDF(premios.getListaPDF());
         resumen.setEstado(EstadoSorteo.get(premios.getStatus()));
         return resumen;
+    }
+
+    private static void setFechaActualizacion(Premios premios, ResumenNavidad resumen) {
+        try {
+            resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
+                    .systemDefault()));
+        } catch (NoClassDefFoundError n) {
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(premios.getTimestamp() * 1000L);
+            resumen.setFechaActualizacionAndroid(date.getTime());
+        }
     }
 
     private static void getQuintoPremio(Premios premios, ResumenNavidad resumen) {

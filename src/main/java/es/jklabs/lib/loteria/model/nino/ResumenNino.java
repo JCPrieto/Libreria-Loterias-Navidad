@@ -4,6 +4,7 @@ import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 public class ResumenNino implements Serializable {
@@ -19,6 +20,7 @@ public class ResumenNino implements Serializable {
     private LocalDateTime fechaActualizacion;
     private String urlPDF;
     private EstadoSorteo estado;
+    private Date fechaActualizacionAndroid;
 
     public String getPrimero() {
         return primero;
@@ -98,5 +100,13 @@ public class ResumenNino implements Serializable {
 
     public void setEstado(EstadoSorteo estado) {
         this.estado = estado;
+    }
+
+    public Date getFechaActualizacionAndroid() {
+        return fechaActualizacionAndroid;
+    }
+
+    public void setFechaActualizacionAndroid(Date fechaActualizacionAndroid) {
+        this.fechaActualizacionAndroid = fechaActualizacionAndroid;
     }
 }
