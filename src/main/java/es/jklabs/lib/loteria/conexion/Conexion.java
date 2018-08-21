@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public class Conexion {
 
-    private static final String HTTP_API_ELPAIS_COM_WS_LOTERIA = "http://api.elpais.com/ws/Loteria";
+    private static final String HTTP_API_ELPAIS_COM_WS_LOTERIA = "https://api.elpais.com/ws/Loteria";
     private static final String PREMIADOS_N = "Premiados?n=";
     private static final String RESUMEN = "resumen";
 
