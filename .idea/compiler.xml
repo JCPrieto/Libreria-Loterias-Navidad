@@ -20,7 +20,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Libreria Loterias de Navidad" target="1.8" />
+      <module name="Libreria Loterias de Navidad" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
