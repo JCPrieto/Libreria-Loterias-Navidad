@@ -21,6 +21,8 @@ public enum EstadoSorteo {
             case 4:
                 retorno = EstadoSorteo.TERMINADO_OFICIAL;
                 break;
+            default:
+                break;
         }
         return retorno;
     }
