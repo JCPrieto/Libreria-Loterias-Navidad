@@ -15,7 +15,7 @@ public class Busqueda {
     private int error;
 
     public Busqueda() {
-
+        //
     }
 
     public String getNumero() {
