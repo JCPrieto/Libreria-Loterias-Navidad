@@ -5,6 +5,11 @@ Actualmente esta librería está en uso en 2 aplicaciones de mi repositorio: Lot
 
 ### Changelog ###
 
+* 3.3.3
+
+    * Correciones de seguridad y estabilidad
+
+
 * 3.3.2
 
     * Actualización de seguridad de despendencias.
