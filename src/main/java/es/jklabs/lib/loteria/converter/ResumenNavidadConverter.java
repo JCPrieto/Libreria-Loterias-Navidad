@@ -3,7 +3,10 @@ package es.jklabs.lib.loteria.converter;
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 import es.jklabs.lib.loteria.model.json.navidad.Premios;
 import es.jklabs.lib.loteria.model.navidad.ResumenNavidad;
+import es.jklabs.utilidades.Logger;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -53,28 +56,21 @@ public class ResumenNavidadConverter {
     }
 
     private static void getQuintoPremio(Premios premios, ResumenNavidad resumen) {
-        if (premios.getNumero6() > -1) {
-            resumen.getQuinto().add(String.format("%05d", premios.getNumero6()));
-            if (premios.getNumero7() > -1) {
-                resumen.getQuinto().add(String.format("%05d", premios.getNumero7()));
-                if (premios.getNumero8() > -1) {
-                    resumen.getQuinto().add(String.format("%05d", premios.getNumero8()));
-                    if (premios.getNumero9() > -1) {
-                        resumen.getQuinto().add(String.format("%05d", premios.getNumero9()));
-                        if (premios.getNumero10() > -1) {
-                            resumen.getQuinto().add(String.format("%05d", premios.getNumero10()));
-                            if (premios.getNumero11() > -1) {
-                                resumen.getQuinto().add(String.format("%05d", premios.getNumero11()));
-                                if (premios.getNumero12() > -1) {
-                                    resumen.getQuinto().add(String.format("%05d", premios.getNumero12()));
-                                    if (premios.getNumero13() > -1) {
-                                        resumen.getQuinto().add(String.format("%05d", premios.getNumero13()));
-                                    }
-                                }
-                            }
-                        }
-                    }
+        int i = 6;
+        boolean fin = false;
+        while (i <= 13 && !fin) {
+            try {
+                Method method = Premios.class.getDeclaredMethod("getNumero" + i);
+                int valor = (int) method.invoke(premios);
+                if (valor > -1) {
+                    resumen.getQuinto().add(String.format("%05d", valor));
+                    i++;
+                } else {
+                    fin = true;
                 }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                fin = true;
+                Logger.error(e);
             }
         }
     }
