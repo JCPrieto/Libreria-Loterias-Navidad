@@ -6,6 +6,10 @@ Actualmente esta librería está en uso en 2 aplicaciones de mi repositorio: Lot
 
 ### Changelog ###
 
+* 3.3.5
+
+  * Correciones de seguridad y estabilidad
+
 * 3.3.4
 
   * Correciones de seguridad y estabilidad
