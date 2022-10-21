@@ -6,7 +6,7 @@
 
     <groupId>es.jklabs.lib.loteria</groupId>
     <artifactId>Libreria_Loterias_Navidad</artifactId>
-    <version>3.3.6</version>
+    <version>3.3.7</version>
     <build>
         <testSourceDirectory>src/test/java/</testSourceDirectory>
         <plugins>
