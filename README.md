@@ -4,7 +4,36 @@ Librería de conexión con la Api de El País para obtener los resultados de las
 
 Actualmente esta librería está en uso en 2 aplicaciones de mi repositorio: LoteríasJava y LoteríasAndroid.
 
+Dependencias añadidas para el cliente HTTP: OpenFeign + OkHttp.
+
+### Uso ###
+
+Ejemplo básico con timeouts y `OkHttpClient` propio:
+
+```java
+okhttp3.OkHttpClient client = new okhttp3.OkHttpClient.Builder()
+        .callTimeout(java.time.Duration.ofSeconds(8))
+        .build();
+
+Conexion conexion = new Conexion(client);
+ResumenNavidad resumen = conexion.getResumenNavidad();
+```
+
+Ejemplo con timeouts y retryer personalizados:
+
+```java
+Retryer retryer = new Retryer.Default(200, 1000, 2);
+Conexion conexion = new Conexion(3000, 8000, retryer);
+Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+```
+
 ### Changelog ###
+
+* 4.0.0
+
+  * Integración de OpenFeign + OkHttp en la conexión HTTP
+  * Scrapper de la web de Loterías y Apuestas del Estado
+  * Actualización a Java 21
 
 * 3.3.7
 
