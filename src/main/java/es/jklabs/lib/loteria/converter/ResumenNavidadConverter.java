@@ -2,16 +2,18 @@ package es.jklabs.lib.loteria.converter;
 
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 import es.jklabs.lib.loteria.model.json.navidad.Premios;
+import es.jklabs.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import es.jklabs.lib.loteria.model.navidad.ResumenNavidad;
 import es.jklabs.utilidades.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.*;
 
 public class ResumenNavidadConverter {
 
@@ -44,6 +46,34 @@ public class ResumenNavidadConverter {
         return resumen;
     }
 
+    public static ResumenNavidad get(SorteoNavidadResponse sorteo) {
+        ResumenNavidad resumen = new ResumenNavidad();
+        if (sorteo == null) {
+            return resumen;
+        }
+        resumen.setGordo(formatDecimo(getDecimo(sorteo.getPrimerPremio())));
+        resumen.setSegundo(formatDecimo(getDecimo(sorteo.getSegundoPremio())));
+        resumen.setTercero(formatDecimo(getDecimo(getFirst(sorteo.getTercerosPremios()))));
+        resumen.setCuarto(new ArrayList<>());
+        for (SorteoNavidadResponse.PremioDetalle premio : safeList(sorteo.getCuartosPremios())) {
+            String decimo = formatDecimo(getDecimo(premio));
+            if (decimo != null) {
+                resumen.getCuarto().add(decimo);
+            }
+        }
+        resumen.setQuinto(new ArrayList<>());
+        for (SorteoNavidadResponse.PremioDetalle premio : safeList(sorteo.getQuintosPremios())) {
+            String decimo = formatDecimo(getDecimo(premio));
+            if (decimo != null) {
+                resumen.getQuinto().add(decimo);
+            }
+        }
+        setFechaActualizacion(sorteo.getFechaSorteo(), resumen);
+        resumen.setUrlPDF(sorteo.getUrlListadoOficial());
+        resumen.setEstado(getEstado(sorteo.getEstado()));
+        return resumen;
+    }
+
     private static void setFechaActualizacion(Premios premios, ResumenNavidad resumen) {
         try {
             resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
@@ -52,6 +82,26 @@ public class ResumenNavidadConverter {
             Calendar date = Calendar.getInstance();
             date.setTimeInMillis(premios.getTimestamp() * 1000L);
             resumen.setFechaActualizacionAndroid(date.getTime());
+        }
+    }
+
+    private static void setFechaActualizacion(String fechaSorteo, ResumenNavidad resumen) {
+        if (fechaSorteo == null) {
+            return;
+        }
+        try {
+            resumen.setFechaActualizacion(LocalDateTime.parse(fechaSorteo.replace(' ', 'T')));
+        } catch (NoClassDefFoundError n) {
+            try {
+                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).parse(fechaSorteo);
+                if (date != null) {
+                    resumen.setFechaActualizacionAndroid(date);
+                }
+            } catch (ParseException ignored) {
+                //
+            }
+        } catch (RuntimeException ignored) {
+            //
         }
     }
 
@@ -73,5 +123,44 @@ public class ResumenNavidadConverter {
                 Logger.error(e);
             }
         }
+    }
+
+    private static EstadoSorteo getEstado(String estado) {
+        if (estado == null) {
+            return null;
+        }
+        String normalizado = estado.trim().toLowerCase(Locale.ROOT);
+        return switch (normalizado) {
+            case "abierto" -> EstadoSorteo.EN_PROCESO;
+            case "cerrado" -> EstadoSorteo.TERMINADO;
+            case "pendiente" -> EstadoSorteo.NO_INICIADO;
+            default -> null;
+        };
+    }
+
+    private static String getDecimo(SorteoNavidadResponse.PremioDetalle premio) {
+        return premio == null ? null : premio.getDecimo();
+    }
+
+    private static SorteoNavidadResponse.PremioDetalle getFirst(List<SorteoNavidadResponse.PremioDetalle> premios) {
+        if (premios == null || premios.isEmpty()) {
+            return null;
+        }
+        return premios.getFirst();
+    }
+
+    private static List<SorteoNavidadResponse.PremioDetalle> safeList(List<SorteoNavidadResponse.PremioDetalle> premios) {
+        return premios == null ? new ArrayList<>() : premios;
+    }
+
+    private static String formatDecimo(String decimo) {
+        if (decimo == null || decimo.isEmpty()) {
+            return null;
+        }
+        if (decimo.length() >= 5) {
+            return decimo;
+        }
+        return "0".repeat(5 - decimo.length()) +
+                decimo;
     }
 }

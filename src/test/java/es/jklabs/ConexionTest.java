@@ -16,6 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 
 public class ConexionTest {
 
@@ -36,24 +39,29 @@ public class ConexionTest {
     public void testResumenNavidad() throws Exception {
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody("resultado=" + resumenNavidadJson()));
+                .setBody(resumenNavidadJson()));
 
         Conexion conexion = createConexion();
         ResumenNavidad resumen = conexion.getResumenNavidad();
 
         RecordedRequest request = server.takeRequest();
-        Assert.assertEquals("/ws/LoteriaNavidadPremiados?n=resumen", request.getPath());
+        String fecha = getUltimoVeintidosDiciembre();
+        Assert.assertEquals("/servicios/buscadorSorteos?fechaInicioInclusiva=" + fecha
+                + "&fechaFinInclusiva=" + fecha
+                + "&game_id=LNAC&celebrados=true", request.getPath());
         Assert.assertNotNull(resumen);
-        Assert.assertEquals("12345", resumen.getGordo());
-        Assert.assertEquals("54321", resumen.getSegundo());
-        Assert.assertEquals("11111", resumen.getTercero());
+        Assert.assertEquals("79432", resumen.getGordo());
+        Assert.assertEquals("70048", resumen.getSegundo());
+        Assert.assertEquals("90693", resumen.getTercero());
         Assert.assertEquals(2, resumen.getCuarto().size());
-        Assert.assertEquals("22222", resumen.getCuarto().get(0));
-        Assert.assertEquals("33333", resumen.getCuarto().get(1));
-        Assert.assertEquals(1, resumen.getQuinto().size());
-        Assert.assertEquals("44444", resumen.getQuinto().get(0));
-        Assert.assertEquals("http://pdf", resumen.getUrlPDF());
-        Assert.assertEquals(EstadoSorteo.EN_PROCESO, resumen.getEstado());
+        Assert.assertEquals("25508", resumen.getCuarto().get(0));
+        Assert.assertEquals("78477", resumen.getCuarto().get(1));
+        Assert.assertEquals(2, resumen.getQuinto().size());
+        Assert.assertEquals("23112", resumen.getQuinto().get(0));
+        Assert.assertEquals("25412", resumen.getQuinto().get(1));
+        Assert.assertEquals("/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S102.pdf",
+                resumen.getUrlPDF());
+        Assert.assertEquals(EstadoSorteo.TERMINADO, resumen.getEstado());
         Assert.assertNotNull(resumen.getFechaActualizacion());
     }
 
@@ -120,28 +128,16 @@ public class ConexionTest {
     }
 
     private String resumenNavidadJson() {
-        return "{"
-                + "\"timestamp\":1700000000,"
-                + "\"status\":1,"
-                + "\"numero1\":12345,"
-                + "\"numero2\":54321,"
-                + "\"numero3\":11111,"
-                + "\"numero4\":22222,"
-                + "\"numero5\":33333,"
-                + "\"numero6\":44444,"
-                + "\"numero7\":-1,"
-                + "\"numero8\":-1,"
-                + "\"numero9\":-1,"
-                + "\"numero10\":-1,"
-                + "\"numero11\":-1,"
-                + "\"numero12\":-1,"
-                + "\"numero13\":-1,"
-                + "\"fraseSorteoPDF\":\"frase\","
-                + "\"fraseListaPDF\":\"lista\","
-                + "\"listaPDF\":\"http://pdf\","
-                + "\"urlAudio\":\"http://audio\","
-                + "\"error\":0"
-                + "}";
+        return "[{"
+                + "\"fecha_sorteo\":\"2025-12-22 08:30:00\","
+                + "\"estado\":\"cerrado\","
+                + "\"primerPremio\":{\"decimo\":\"79432\"},"
+                + "\"segundoPremio\":{\"decimo\":\"70048\"},"
+                + "\"tercerosPremios\":[{\"decimo\":\"90693\"}],"
+                + "\"cuartosPremios\":[{\"decimo\":\"25508\"},{\"decimo\":\"78477\"}],"
+                + "\"quintosPremios\":[{\"decimo\":\"23112\"},{\"decimo\":\"25412\"}],"
+                + "\"urlListadoOficial\":\"/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S102.pdf\""
+                + "}]";
     }
 
     private String resumenNinoJson() {
@@ -169,6 +165,16 @@ public class ConexionTest {
                 + "\"status\":4,"
                 + "\"error\":0"
                 + "}";
+    }
+
+    private String getUltimoVeintidosDiciembre() {
+        LocalDate ahora = LocalDate.now();
+        int year = ahora.getYear();
+        LocalDate fechaSorteo = LocalDate.of(year, Month.DECEMBER, 22);
+        if (ahora.isBefore(fechaSorteo)) {
+            fechaSorteo = LocalDate.of(year - 1, Month.DECEMBER, 22);
+        }
+        return fechaSorteo.format(DateTimeFormatter.BASIC_ISO_DATE);
     }
 
     private static class HostRewriteInterceptor implements Interceptor {
