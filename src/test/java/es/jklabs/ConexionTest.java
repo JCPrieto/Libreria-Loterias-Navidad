@@ -37,6 +37,7 @@ public class ConexionTest {
 
     @Test
     public void testResumenNavidad() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setBody(resumenNavidadJson()));
@@ -44,11 +45,18 @@ public class ConexionTest {
         Conexion conexion = createConexion();
         ResumenNavidad resumen = conexion.getResumenNavidad();
 
+        RecordedRequest warmupRequest = server.takeRequest();
+        Assert.assertEquals("/", warmupRequest.getPath());
         RecordedRequest request = server.takeRequest();
         String fecha = getUltimoVeintidosDiciembre();
         Assert.assertEquals("/servicios/buscadorSorteos?fechaInicioInclusiva=" + fecha
                 + "&fechaFinInclusiva=" + fecha
                 + "&game_id=LNAC&celebrados=true", request.getPath());
+        Assert.assertEquals("*/*", request.getHeader("Accept"));
+        Assert.assertEquals("no-cache", request.getHeader("Cache-Control"));
+        Assert.assertEquals("es-ES,es;q=0.9", request.getHeader("Accept-Language"));
+        Assert.assertEquals("https://www.loteriasyapuestas.es/", request.getHeader("Referer"));
+        Assert.assertNotNull(request.getHeader("User-Agent"));
         Assert.assertNotNull(resumen);
         Assert.assertEquals("79432", resumen.getGordo());
         Assert.assertEquals("70048", resumen.getSegundo());
