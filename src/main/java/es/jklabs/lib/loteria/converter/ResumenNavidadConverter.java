@@ -8,12 +8,11 @@ import es.jklabs.utilidades.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class ResumenNavidadConverter {
 
@@ -51,26 +50,18 @@ public class ResumenNavidadConverter {
         if (sorteo == null) {
             return resumen;
         }
-        resumen.setGordo(formatDecimo(getDecimo(sorteo.getPrimerPremio())));
-        resumen.setSegundo(formatDecimo(getDecimo(sorteo.getSegundoPremio())));
-        resumen.setTercero(formatDecimo(getDecimo(getFirst(sorteo.getTercerosPremios()))));
+        String base = urlBase == null ? "" : urlBase;
+        resumen.setGordo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getPrimerPremio())));
+        resumen.setSegundo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getSegundoPremio())));
+        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(
+                getDecimo(SorteoResponseConverterUtils.getFirst(sorteo.getTercerosPremios()))));
         resumen.setCuarto(new ArrayList<>());
-        for (SorteoNavidadResponse.PremioDetalle premio : safeList(sorteo.getCuartosPremios())) {
-            String decimo = formatDecimo(getDecimo(premio));
-            if (decimo != null) {
-                resumen.getCuarto().add(decimo);
-            }
-        }
+        resumen.getCuarto().addAll(SorteoResponseConverterUtils.extractDecimos(sorteo.getCuartosPremios(), true));
         resumen.setQuinto(new ArrayList<>());
-        for (SorteoNavidadResponse.PremioDetalle premio : safeList(sorteo.getQuintosPremios())) {
-            String decimo = formatDecimo(getDecimo(premio));
-            if (decimo != null) {
-                resumen.getQuinto().add(decimo);
-            }
-        }
+        resumen.getQuinto().addAll(SorteoResponseConverterUtils.extractDecimos(sorteo.getQuintosPremios(), true));
         setFechaActualizacion(sorteo.getFechaSorteo(), resumen);
-        resumen.setUrlPDF(urlBase + sorteo.getUrlListadoOficial());
-        resumen.setEstado(getEstado(sorteo.getEstado()));
+        resumen.setUrlPDF(base + sorteo.getUrlListadoOficial());
+        resumen.setEstado(SorteoResponseConverterUtils.getEstado(sorteo.getEstado()));
         return resumen;
     }
 
@@ -86,23 +77,11 @@ public class ResumenNavidadConverter {
     }
 
     private static void setFechaActualizacion(String fechaSorteo, ResumenNavidad resumen) {
-        if (fechaSorteo == null) {
-            return;
-        }
-        try {
-            resumen.setFechaActualizacion(LocalDateTime.parse(fechaSorteo.replace(' ', 'T')));
-        } catch (NoClassDefFoundError n) {
-            try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).parse(fechaSorteo);
-                if (date != null) {
-                    resumen.setFechaActualizacionAndroid(date);
-                }
-            } catch (ParseException ignored) {
-                //
-            }
-        } catch (RuntimeException ignored) {
-            //
-        }
+        SorteoResponseConverterUtils.setFechaActualizacion(
+                fechaSorteo,
+                resumen::setFechaActualizacion,
+                resumen::setFechaActualizacionAndroid
+        );
     }
 
     private static void getQuintoPremio(Premios premios, ResumenNavidad resumen) {
@@ -125,42 +104,7 @@ public class ResumenNavidadConverter {
         }
     }
 
-    private static EstadoSorteo getEstado(String estado) {
-        if (estado == null) {
-            return null;
-        }
-        String normalizado = estado.trim().toLowerCase(Locale.ROOT);
-        return switch (normalizado) {
-            case "abierto" -> EstadoSorteo.EN_PROCESO;
-            case "cerrado" -> EstadoSorteo.TERMINADO;
-            case "pendiente" -> EstadoSorteo.NO_INICIADO;
-            default -> null;
-        };
-    }
-
     private static String getDecimo(SorteoNavidadResponse.PremioDetalle premio) {
         return premio == null ? null : premio.getDecimo();
-    }
-
-    private static SorteoNavidadResponse.PremioDetalle getFirst(List<SorteoNavidadResponse.PremioDetalle> premios) {
-        if (premios == null || premios.isEmpty()) {
-            return null;
-        }
-        return premios.getFirst();
-    }
-
-    private static List<SorteoNavidadResponse.PremioDetalle> safeList(List<SorteoNavidadResponse.PremioDetalle> premios) {
-        return premios == null ? new ArrayList<>() : premios;
-    }
-
-    private static String formatDecimo(String decimo) {
-        if (decimo == null || decimo.isEmpty()) {
-            return null;
-        }
-        if (decimo.length() >= 5) {
-            return decimo;
-        }
-        return "0".repeat(5 - decimo.length()) +
-                decimo;
     }
 }

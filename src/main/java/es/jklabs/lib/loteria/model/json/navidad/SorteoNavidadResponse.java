@@ -16,6 +16,10 @@ public class SorteoNavidadResponse {
     private List<PremioDetalle> tercerosPremios;
     private List<PremioDetalle> cuartosPremios;
     private List<PremioDetalle> quintosPremios;
+    private List<PremioDetalle> extraccionesDeCuatroCifras;
+    private List<PremioDetalle> extraccionesDeTresCifras;
+    private List<PremioDetalle> extraccionesDeDosCifras;
+    private List<PremioDetalle> reintegros;
     private String urlListadoOficial;
 
     public String getFechaSorteo() {
@@ -72,6 +76,38 @@ public class SorteoNavidadResponse {
 
     public void setQuintosPremios(List<PremioDetalle> quintosPremios) {
         this.quintosPremios = quintosPremios;
+    }
+
+    public List<PremioDetalle> getExtraccionesDeCuatroCifras() {
+        return extraccionesDeCuatroCifras;
+    }
+
+    public void setExtraccionesDeCuatroCifras(List<PremioDetalle> extraccionesDeCuatroCifras) {
+        this.extraccionesDeCuatroCifras = extraccionesDeCuatroCifras;
+    }
+
+    public List<PremioDetalle> getExtraccionesDeTresCifras() {
+        return extraccionesDeTresCifras;
+    }
+
+    public void setExtraccionesDeTresCifras(List<PremioDetalle> extraccionesDeTresCifras) {
+        this.extraccionesDeTresCifras = extraccionesDeTresCifras;
+    }
+
+    public List<PremioDetalle> getExtraccionesDeDosCifras() {
+        return extraccionesDeDosCifras;
+    }
+
+    public void setExtraccionesDeDosCifras(List<PremioDetalle> extraccionesDeDosCifras) {
+        this.extraccionesDeDosCifras = extraccionesDeDosCifras;
+    }
+
+    public List<PremioDetalle> getReintegros() {
+        return reintegros;
+    }
+
+    public void setReintegros(List<PremioDetalle> reintegros) {
+        this.reintegros = reintegros;
     }
 
     public String getUrlListadoOficial() {

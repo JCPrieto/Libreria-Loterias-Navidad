@@ -75,28 +75,40 @@ public class ConexionTest {
 
     @Test
     public void testResumenNino() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody("resultado=" + resumenNinoJson()));
+                .setBody(resumenNinoJson()));
 
         Conexion conexion = createConexion();
         ResumenNino resumen = conexion.getResumenNino();
 
+        RecordedRequest warmupRequest = server.takeRequest();
+        Assert.assertEquals("/", warmupRequest.getPath());
         RecordedRequest request = server.takeRequest();
-        Assert.assertEquals("/ws/LoteriaNinoPremiados?n=resumen", request.getPath());
+        String fecha = getUltimoSeisEnero();
+        Assert.assertEquals("/servicios/buscadorSorteos?fechaInicioInclusiva=" + fecha
+                + "&fechaFinInclusiva=" + fecha
+                + "&game_id=LNAC&celebrados=true", request.getPath());
         Assert.assertNotNull(resumen);
-        Assert.assertEquals("11111", resumen.getPrimero());
-        Assert.assertEquals("22222", resumen.getSegundo());
-        Assert.assertEquals("33333", resumen.getTercero());
-        Assert.assertEquals(1, resumen.getCuatroCifras().size());
-        Assert.assertEquals("1234", resumen.getCuatroCifras().get(0));
-        Assert.assertEquals(1, resumen.getTresCifras().size());
-        Assert.assertEquals("234", resumen.getTresCifras().get(0));
-        Assert.assertEquals(1, resumen.getDosCifras().size());
-        Assert.assertEquals("12", resumen.getDosCifras().get(0));
-        Assert.assertEquals(1, resumen.getReintegros().size());
-        Assert.assertEquals("1", resumen.getReintegros().get(0));
-        Assert.assertEquals("http://pdf", resumen.getUrlPDF());
+        Assert.assertEquals("78908", resumen.getPrimero());
+        Assert.assertEquals("06766", resumen.getSegundo());
+        Assert.assertEquals("66777", resumen.getTercero());
+        Assert.assertEquals(2, resumen.getCuatroCifras().size());
+        Assert.assertEquals("1454", resumen.getCuatroCifras().get(0));
+        Assert.assertEquals("4276", resumen.getCuatroCifras().get(1));
+        Assert.assertEquals(2, resumen.getTresCifras().size());
+        Assert.assertEquals("040", resumen.getTresCifras().get(0));
+        Assert.assertEquals("184", resumen.getTresCifras().get(1));
+        Assert.assertEquals(2, resumen.getDosCifras().size());
+        Assert.assertEquals("11", resumen.getDosCifras().get(0));
+        Assert.assertEquals("26", resumen.getDosCifras().get(1));
+        Assert.assertEquals(3, resumen.getReintegros().size());
+        Assert.assertEquals("0", resumen.getReintegros().get(0));
+        Assert.assertEquals("5", resumen.getReintegros().get(1));
+        Assert.assertEquals("8", resumen.getReintegros().get(2));
+        Assert.assertEquals("https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S002.pdf",
+                resumen.getUrlPDF());
         Assert.assertEquals(EstadoSorteo.TERMINADO, resumen.getEstado());
         Assert.assertNotNull(resumen.getFechaActualizacion());
     }
@@ -149,20 +161,18 @@ public class ConexionTest {
     }
 
     private String resumenNinoJson() {
-        return "{"
-                + "\"timestamp\":1700000000,"
-                + "\"status\":3,"
-                + "\"fraseTexto\":\"algo\","
-                + "\"pdfURL\":\"http://pdf\","
-                + "\"error\":0,"
-                + "\"premio1\":11111,"
-                + "\"premio2\":22222,"
-                + "\"premio3\":33333,"
-                + "\"extracciones4cifras\":[\"1234\",\"-1\"],"
-                + "\"extracciones3cifras\":[\"234\",\"-1\"],"
-                + "\"extracciones2cifras\":[\"12\",\"-1\"],"
-                + "\"reintegros\":[\"1\",\"-1\"]"
-                + "}";
+        return "[{"
+                + "\"fecha_sorteo\":\"2025-01-06 12:00:00\","
+                + "\"estado\":\"cerrado\","
+                + "\"primerPremio\":{\"decimo\":\"78908\"},"
+                + "\"segundoPremio\":{\"decimo\":\"06766\"},"
+                + "\"tercerosPremios\":[{\"decimo\":\"66777\"}],"
+                + "\"extraccionesDeCuatroCifras\":[{\"decimo\":\"1454\"},{\"decimo\":\"4276\"}],"
+                + "\"extraccionesDeTresCifras\":[{\"decimo\":\"040\"},{\"decimo\":\"184\"}],"
+                + "\"extraccionesDeDosCifras\":[{\"decimo\":\"11\"},{\"decimo\":\"26\"}],"
+                + "\"reintegros\":[{\"decimo\":\"0\"},{\"decimo\":\"5\"},{\"decimo\":\"8\"}],"
+                + "\"urlListadoOficial\":\"/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S002.pdf\""
+                + "}]";
     }
 
     private String premioJson() {
@@ -173,6 +183,16 @@ public class ConexionTest {
                 + "\"status\":4,"
                 + "\"error\":0"
                 + "}";
+    }
+
+    private String getUltimoSeisEnero() {
+        LocalDate ahora = LocalDate.now();
+        int year = ahora.getYear();
+        LocalDate fechaSorteo = LocalDate.of(year, Month.JANUARY, 6);
+        if (ahora.isBefore(fechaSorteo)) {
+            fechaSorteo = LocalDate.of(year - 1, Month.JANUARY, 6);
+        }
+        return fechaSorteo.format(DateTimeFormatter.BASIC_ISO_DATE);
     }
 
     private String getUltimoVeintidosDiciembre() {

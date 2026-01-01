@@ -1,6 +1,6 @@
 package es.jklabs.lib.loteria.converter;
 
-import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
+import es.jklabs.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import es.jklabs.lib.loteria.model.json.nino.Premios;
 import es.jklabs.lib.loteria.model.nino.ResumenNino;
 
@@ -53,7 +53,31 @@ public class ResumenNinoConverter {
         }
         setFechaActualizacion(premios, resumen);
         resumen.setUrlPDF(premios.getPdfURL());
-        resumen.setEstado(EstadoSorteo.get(premios.getStatus()));
+        resumen.setEstado(es.jklabs.lib.loteria.enumeradores.EstadoSorteo.get(premios.getStatus()));
+        return resumen;
+    }
+
+    public static ResumenNino get(String urlBase, SorteoNavidadResponse sorteo) {
+        ResumenNino resumen = new ResumenNino();
+        if (sorteo == null) {
+            return resumen;
+        }
+        String base = urlBase == null ? "" : urlBase;
+        resumen.setPrimero(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getPrimerPremio())));
+        resumen.setSegundo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getSegundoPremio())));
+        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(
+                getDecimo(SorteoResponseConverterUtils.getFirst(sorteo.getTercerosPremios()))));
+        resumen.setCuatroCifras(new ArrayList<>(
+                SorteoResponseConverterUtils.extractDecimos(sorteo.getExtraccionesDeCuatroCifras(), false)));
+        resumen.setTresCifras(new ArrayList<>(
+                SorteoResponseConverterUtils.extractDecimos(sorteo.getExtraccionesDeTresCifras(), false)));
+        resumen.setDosCifras(new ArrayList<>(
+                SorteoResponseConverterUtils.extractDecimos(sorteo.getExtraccionesDeDosCifras(), false)));
+        resumen.setReintegros(new ArrayList<>(
+                SorteoResponseConverterUtils.extractDecimos(sorteo.getReintegros(), false)));
+        setFechaActualizacion(sorteo.getFechaSorteo(), resumen);
+        resumen.setUrlPDF(base + sorteo.getUrlListadoOficial());
+        resumen.setEstado(SorteoResponseConverterUtils.getEstado(sorteo.getEstado()));
         return resumen;
     }
 
@@ -66,5 +90,17 @@ public class ResumenNinoConverter {
             date.setTimeInMillis(premios.getTimestamp() * 1000L);
             resumen.setFechaActualizacionAndroid(date.getTime());
         }
+    }
+
+    private static void setFechaActualizacion(String fechaSorteo, ResumenNino resumen) {
+        SorteoResponseConverterUtils.setFechaActualizacion(
+                fechaSorteo,
+                resumen::setFechaActualizacion,
+                resumen::setFechaActualizacionAndroid
+        );
+    }
+
+    private static String getDecimo(SorteoNavidadResponse.PremioDetalle premio) {
+        return premio == null ? null : premio.getDecimo();
     }
 }

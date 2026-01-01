@@ -40,7 +40,6 @@ public class Conexion {
     private static final String BASE_URL = "https://api.elpais.com";
     private static final String BASE_URL_SORTEOS = "https://www.loteriasyapuestas.es";
     private static final String PREMIADOS_N = "Premiados?n=";
-    private static final String RESUMEN = "resumen";
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 10_000;
     private static final Retryer DEFAULT_RETRYER = new Retryer.Default(200, TimeUnit.SECONDS.toMillis(1), 2);
@@ -98,11 +97,19 @@ public class Conexion {
     }
 
     private static String getUltimoVeintidosDiciembre() {
+        return getUltimaFecha(Month.DECEMBER, 22);
+    }
+
+    private static String getUltimoSeisEnero() {
+        return getUltimaFecha(Month.JANUARY, 6);
+    }
+
+    private static String getUltimaFecha(Month month, int dayOfMonth) {
         LocalDate ahora = LocalDate.now();
         int year = ahora.getYear();
-        LocalDate fechaSorteo = LocalDate.of(year, Month.DECEMBER, 22);
+        LocalDate fechaSorteo = LocalDate.of(year, month, dayOfMonth);
         if (ahora.isBefore(fechaSorteo)) {
-            fechaSorteo = LocalDate.of(year - 1, Month.DECEMBER, 22);
+            fechaSorteo = LocalDate.of(year - 1, month, dayOfMonth);
         }
         return fechaSorteo.format(DATE_FORMAT);
     }
@@ -151,9 +158,6 @@ public class Conexion {
 
     private interface LoteriaApi {
 
-        @RequestLine("GET /ws/Loteria{parametro}" + PREMIADOS_N + RESUMEN)
-        es.jklabs.lib.loteria.model.json.nino.Premios getResumenNino(@Param("parametro") String parametro);
-
         @RequestLine("GET /ws/Loteria{parametro}" + PREMIADOS_N + "{numero}")
         Busqueda getPremio(@Param("parametro") String parametro, @Param("numero") int numero);
     }
@@ -169,8 +173,13 @@ public class Conexion {
 
     public ResumenNino getResumenNino() throws IOException {
         try {
-            es.jklabs.lib.loteria.model.json.nino.Premios premios = api.getResumenNino(Sorteo.NINO.getParametro());
-            return ResumenNinoConverter.get(premios);
+            warmUpLoterias();
+            String fecha = getUltimoSeisEnero();
+            List<SorteoNavidadResponse> sorteos = resultadosApi.getResumenNavidad(fecha, fecha);
+            if (sorteos == null || sorteos.isEmpty()) {
+                return null;
+            }
+            return ResumenNinoConverter.get(BASE_URL_SORTEOS, sorteos.getFirst());
         } catch (FeignException e) {
             Logger.error(e);
             return null;
