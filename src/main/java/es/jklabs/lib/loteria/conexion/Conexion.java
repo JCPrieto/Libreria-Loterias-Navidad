@@ -82,9 +82,9 @@ public class Conexion {
             jar = new InMemoryCookieJar();
             client = client.newBuilder().cookieJar(jar).build();
         }
-        this.cookieJar = jar;
+        cookieJar = jar;
         this.rawClient = client;
-        this.cmsCookie = cmsCookie;
+        Conexion.cmsCookie = cmsCookie;
         Feign.Builder baseBuilder = Feign.builder()
                 .client(new OkHttpClient(this.rawClient))
                 .decoder(new PrefixedJsonDecoder())
@@ -129,7 +129,7 @@ public class Conexion {
         if (cookieJar == null) {
             return null;
         }
-        String cookieHeader = cookieJar.getCookieHeader("www.loteriasyapuestas.es");
+        String cookieHeader = cookieJar.getCookieHeader();
         return cookieHeader == null || cookieHeader.isBlank() ? null : cookieHeader;
     }
 
@@ -150,8 +150,6 @@ public class Conexion {
     }
 
     private interface LoteriaApi {
-        @RequestLine("GET /ws/Loteria{parametro}" + PREMIADOS_N + RESUMEN)
-        es.jklabs.lib.loteria.model.json.navidad.Premios getResumenNavidad(@Param("parametro") String parametro);
 
         @RequestLine("GET /ws/Loteria{parametro}" + PREMIADOS_N + RESUMEN)
         es.jklabs.lib.loteria.model.json.nino.Premios getResumenNino(@Param("parametro") String parametro);
@@ -189,7 +187,7 @@ public class Conexion {
             if (sorteos == null || sorteos.isEmpty()) {
                 return null;
             }
-            return ResumenNavidadConverter.get(sorteos.getFirst());
+            return ResumenNavidadConverter.get(BASE_URL_SORTEOS, sorteos.getFirst());
         } catch (FeignException e) {
             Logger.error(e);
             return null;
@@ -247,14 +245,14 @@ public class Conexion {
             return cookies == null ? List.of() : cookies;
         }
 
-        private String getCookieHeader(String host) {
-            List<Cookie> cookies = store.get(host);
+        private String getCookieHeader() {
+            List<Cookie> cookies = store.get("www.loteriasyapuestas.es");
             if (cookies == null || cookies.isEmpty()) {
                 return null;
             }
             StringBuilder header = new StringBuilder();
             for (Cookie cookie : cookies) {
-                if (header.length() > 0) {
+                if (!header.isEmpty()) {
                     header.append("; ");
                 }
                 header.append(cookie.name()).append('=').append(cookie.value());

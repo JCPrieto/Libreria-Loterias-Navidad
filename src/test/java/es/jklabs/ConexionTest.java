@@ -67,7 +67,7 @@ public class ConexionTest {
         Assert.assertEquals(2, resumen.getQuinto().size());
         Assert.assertEquals("23112", resumen.getQuinto().get(0));
         Assert.assertEquals("25412", resumen.getQuinto().get(1));
-        Assert.assertEquals("/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S102.pdf",
+        Assert.assertEquals("https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería Nacional/listas de premios/SM_LISTAOFICIAL.A2025.S102.pdf",
                 resumen.getUrlPDF());
         Assert.assertEquals(EstadoSorteo.TERMINADO, resumen.getEstado());
         Assert.assertNotNull(resumen.getFechaActualizacion());

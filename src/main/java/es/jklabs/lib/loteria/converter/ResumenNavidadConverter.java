@@ -46,7 +46,7 @@ public class ResumenNavidadConverter {
         return resumen;
     }
 
-    public static ResumenNavidad get(SorteoNavidadResponse sorteo) {
+    public static ResumenNavidad get(String urlBase, SorteoNavidadResponse sorteo) {
         ResumenNavidad resumen = new ResumenNavidad();
         if (sorteo == null) {
             return resumen;
@@ -69,7 +69,7 @@ public class ResumenNavidadConverter {
             }
         }
         setFechaActualizacion(sorteo.getFechaSorteo(), resumen);
-        resumen.setUrlPDF(sorteo.getUrlListadoOficial());
+        resumen.setUrlPDF(urlBase + sorteo.getUrlListadoOficial());
         resumen.setEstado(getEstado(sorteo.getEstado()));
         return resumen;
     }

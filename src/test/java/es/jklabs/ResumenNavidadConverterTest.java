@@ -58,7 +58,7 @@ public class ResumenNavidadConverterTest {
         sorteo.setCuartosPremios(List.of(premio("25508"), premio("78477")));
         sorteo.setQuintosPremios(List.of(premio("23112"), premio("25412")));
 
-        ResumenNavidad resumen = ResumenNavidadConverter.get(sorteo);
+        ResumenNavidad resumen = ResumenNavidadConverter.get("", sorteo);
 
         Assert.assertEquals("79432", resumen.getGordo());
         Assert.assertEquals("70048", resumen.getSegundo());
@@ -81,7 +81,7 @@ public class ResumenNavidadConverterTest {
         sorteo.setSegundoPremio(premio("7"));
         sorteo.setTercerosPremios(List.of(premio("45")));
 
-        ResumenNavidad resumen = ResumenNavidadConverter.get(sorteo);
+        ResumenNavidad resumen = ResumenNavidadConverter.get("", sorteo);
 
         Assert.assertEquals("00123", resumen.getGordo());
         Assert.assertEquals("00007", resumen.getSegundo());
