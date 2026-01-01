@@ -3,6 +3,7 @@ package es.jklabs;
 import es.jklabs.lib.loteria.conexion.Conexion;
 import es.jklabs.lib.loteria.enumeradores.EstadoSorteo;
 import es.jklabs.lib.loteria.enumeradores.Sorteo;
+import es.jklabs.lib.loteria.excepciones.PremioDecimoNoDisponibleException;
 import es.jklabs.lib.loteria.model.Premio;
 import es.jklabs.lib.loteria.model.navidad.ResumenNavidad;
 import es.jklabs.lib.loteria.model.nino.ResumenNino;
@@ -115,19 +116,63 @@ public class ConexionTest {
 
     @Test
     public void testPremio() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .setBody("resultado=" + premioJson()));
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJson()));
 
         Conexion conexion = createConexion();
         Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 
+        RecordedRequest warmupRequest = server.takeRequest();
+        Assert.assertEquals("/", warmupRequest.getPath());
         RecordedRequest request = server.takeRequest();
-        Assert.assertEquals("/ws/LoteriaNavidadPremiados?n=12345", request.getPath());
+        String fecha = getUltimoVeintidosDiciembre();
+        Assert.assertEquals("/servicios/buscadorSorteosConEscrutinio?fechaInicioInclusiva=" + fecha
+                + "&fechaFinInclusiva=" + fecha
+                + "&game_id=LNAC&limiteMaxResultados=1", request.getPath());
+        RecordedRequest premioRequest = server.takeRequest();
+        Assert.assertEquals("/servicios/premioDecimoWeb?idsorteo=1295909102", premioRequest.getPath());
         Assert.assertNotNull(premio);
         Assert.assertEquals(50.0, premio.getCantidad(), 0.001);
-        Assert.assertEquals(EstadoSorteo.TERMINADO_OFICIAL, premio.getEstado());
+        Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
         Assert.assertNotNull(premio.getFechaActualizacion());
+    }
+
+    @Test
+    public void testPremioUsaCache() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJson()));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+        Premio premioCache = conexion.getPremio(Sorteo.NAVIDAD, "54321");
+
+        Assert.assertNotNull(premio);
+        Assert.assertNotNull(premioCache);
+        Assert.assertEquals(3, server.getRequestCount());
+    }
+
+    @Test(expected = PremioDecimoNoDisponibleException.class)
+    public void testPremioDecimoNoDisponible() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("E019"));
+
+        Conexion conexion = createConexion();
+        conexion.getPremio(Sorteo.NAVIDAD, "12345");
     }
 
     @Test
@@ -175,13 +220,18 @@ public class ConexionTest {
                 + "}]";
     }
 
-    private String premioJson() {
+    private String sorteoConEscrutinioJson() {
+        return "[{"
+                + "\"fecha_sorteo\":\"2025-12-22 08:30:00\","
+                + "\"estado\":\"cerrado\","
+                + "\"id_sorteo\":\"1295909102\""
+                + "}]";
+    }
+
+    private String premioDecimoJson() {
         return "{"
-                + "\"numero\":\"12345\","
-                + "\"premio\":1000,"
-                + "\"timestamp\":1700000000,"
-                + "\"status\":4,"
-                + "\"error\":0"
+                + "\"importePorDefecto\":2000,"
+                + "\"compruebe\":[{\"decimo\":\"012345\",\"prize\":100000}]"
                 + "}";
     }
 

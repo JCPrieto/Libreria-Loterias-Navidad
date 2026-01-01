@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.jklabs.lib.loteria.converter.PremioConverter;
 import es.jklabs.lib.loteria.converter.ResumenNavidadConverter;
 import es.jklabs.lib.loteria.converter.ResumenNinoConverter;
+import es.jklabs.lib.loteria.converter.SorteoResponseConverterUtils;
 import es.jklabs.lib.loteria.enumeradores.Sorteo;
+import es.jklabs.lib.loteria.excepciones.PremioDecimoNoDisponibleException;
 import es.jklabs.lib.loteria.model.Premio;
-import es.jklabs.lib.loteria.model.json.Busqueda;
+import es.jklabs.lib.loteria.model.json.navidad.PremioDecimoResponse;
+import es.jklabs.lib.loteria.model.json.navidad.SorteoConEscrutinioResponse;
 import es.jklabs.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import es.jklabs.lib.loteria.model.navidad.ResumenNavidad;
 import es.jklabs.lib.loteria.model.nino.ResumenNino;
@@ -37,20 +40,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Conexion {
 
-    private static final String BASE_URL = "https://api.elpais.com";
     private static final String BASE_URL_SORTEOS = "https://www.loteriasyapuestas.es";
-    private static final String PREMIADOS_N = "Premiados?n=";
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 10_000;
     private static final Retryer DEFAULT_RETRYER = new Retryer.Default(200, TimeUnit.SECONDS.toMillis(1), 2);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.BASIC_ISO_DATE;
     private static final String LOTERIAS_USER_AGENT = "PostmanRuntime/7.51.0";
-    private final LoteriaApi api;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final LoteriaResultadosApi resultadosApi;
     private static InMemoryCookieJar cookieJar;
     private static String cmsCookie;
     private final okhttp3.OkHttpClient rawClient;
     private final AtomicBoolean loteriasWarmup = new AtomicBoolean(false);
+    private final Map<Sorteo, PremioDecimoCache> premioCache = new HashMap<>();
 
     public Conexion() {
         this(DEFAULT_CONNECT_TIMEOUT_MS, DEFAULT_READ_TIMEOUT_MS, DEFAULT_RETRYER);
@@ -90,7 +92,6 @@ public class Conexion {
                 .options(new feign.Request.Options(connectTimeoutMillis, TimeUnit.MILLISECONDS, readTimeoutMillis,
                         TimeUnit.MILLISECONDS, true))
                 .retryer(retryer == null ? DEFAULT_RETRYER : retryer);
-        this.api = baseBuilder.target(LoteriaApi.class, BASE_URL);
         this.resultadosApi = baseBuilder
                 .requestInterceptor(loteriasHeaders())
                 .target(LoteriaResultadosApi.class, BASE_URL_SORTEOS);
@@ -142,8 +143,17 @@ public class Conexion {
 
     public Premio getPremio(Sorteo sorteo, String numero) throws IOException {
         try {
-            Busqueda busqueda = api.getPremio(sorteo.getParametro(), Integer.parseInt(numero));
-            return PremioConverter.get(busqueda);
+            warmUpLoterias();
+            PremioDecimoCache cache = getPremioCache(sorteo);
+            if (cache == null) {
+                return null;
+            }
+            String normalized = normalizeDecimo(numero);
+            if (normalized == null) {
+                return null;
+            }
+            long premio = cache.premiosPorDecimo.getOrDefault(normalized, 0L);
+            return PremioConverter.get(cache.estado, cache.fechaSorteo, premio, cache.importePorDefecto);
         } catch (FeignException e) {
             return null;
         } catch (RuntimeException e) {
@@ -156,19 +166,32 @@ public class Conexion {
         return trimmed.contains("=") ? trimmed : "cms=" + trimmed;
     }
 
-    private interface LoteriaApi {
-
-        @RequestLine("GET /ws/Loteria{parametro}" + PREMIADOS_N + "{numero}")
-        Busqueda getPremio(@Param("parametro") String parametro, @Param("numero") int numero);
-    }
-
-    private interface LoteriaResultadosApi {
-        @RequestLine("GET /servicios/buscadorSorteos?fechaInicioInclusiva={fechaInicioInclusiva}"
-                + "&fechaFinInclusiva={fechaFinInclusiva}&game_id=LNAC&celebrados=true")
-        List<SorteoNavidadResponse> getResumenNavidad(
-                @Param("fechaInicioInclusiva") String fechaInicioInclusiva,
-                @Param("fechaFinInclusiva") String fechaFinInclusiva
-        );
+    private PremioDecimoCache getPremioCache(Sorteo sorteo) throws IOException {
+        String fecha = getFechaSorteo(sorteo);
+        synchronized (premioCache) {
+            PremioDecimoCache cached = premioCache.get(sorteo);
+            if (cached != null && fecha.equals(cached.fechaConsulta)) {
+                return cached;
+            }
+        }
+        List<SorteoConEscrutinioResponse> sorteos = resultadosApi.getSorteosConEscrutinio(fecha, fecha);
+        if (sorteos == null || sorteos.isEmpty()) {
+            return null;
+        }
+        SorteoConEscrutinioResponse sorteoResponse = sorteos.getFirst();
+        if (sorteoResponse.getIdSorteo() == null || sorteoResponse.getIdSorteo().isBlank()) {
+            return null;
+        }
+        PremioDecimoResponse premioResponse = parsePremioDecimo(resultadosApi.getPremioDecimo(
+                sorteoResponse.getIdSorteo()));
+        if (premioResponse == null || premioResponse.getImportePorDefecto() <= 0) {
+            return null;
+        }
+        PremioDecimoCache cache = buildPremioCache(fecha, sorteoResponse, premioResponse);
+        synchronized (premioCache) {
+            premioCache.put(sorteo, cache);
+        }
+        return cache;
     }
 
     public ResumenNino getResumenNino() throws IOException {
@@ -222,6 +245,87 @@ public class Conexion {
         } catch (IOException ignored) {
             // Ignore warmup failures; the API call may still succeed.
         }
+    }
+
+    private PremioDecimoResponse parsePremioDecimo(Response response) throws IOException {
+        if (response == null || response.body() == null) {
+            return null;
+        }
+        String raw = new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String trimmed = raw.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        if ("E019".equals(trimmed) || "\"E019\"".equals(trimmed)) {
+            throw new PremioDecimoNoDisponibleException("Premio no disponible para el sorteo solicitado");
+        }
+        return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
+    }
+
+    private PremioDecimoCache buildPremioCache(String fechaConsulta, SorteoConEscrutinioResponse sorteoResponse,
+                                               PremioDecimoResponse premioResponse) {
+        PremioDecimoCache cache = new PremioDecimoCache();
+        cache.fechaConsulta = fechaConsulta;
+        cache.estado = sorteoResponse.getEstado();
+        cache.fechaSorteo = sorteoResponse.getFechaSorteo();
+        cache.importePorDefecto = premioResponse.getImportePorDefecto();
+        cache.premiosPorDecimo = new HashMap<>();
+        if (premioResponse.getCompruebe() == null) {
+            return cache;
+        }
+        for (PremioDecimoResponse.PremioDetalle premio : premioResponse.getCompruebe()) {
+            if (premio == null) {
+                continue;
+            }
+            String decimo = normalizeDecimo(premio.getDecimo());
+            if (decimo != null) {
+                cache.premiosPorDecimo.put(decimo, premio.getPrize());
+            }
+        }
+        return cache;
+    }
+
+    private String getFechaSorteo(Sorteo sorteo) {
+        return sorteo == Sorteo.NINO ? getUltimoSeisEnero() : getUltimoVeintidosDiciembre();
+    }
+
+    private String normalizeDecimo(String numero) {
+        if (numero == null) {
+            return null;
+        }
+        String trimmed = numero.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        String normalized = trimmed.length() > 5 ? trimmed.substring(trimmed.length() - 5) : trimmed;
+        return SorteoResponseConverterUtils.formatDecimo(normalized);
+    }
+
+    private interface LoteriaResultadosApi {
+        @RequestLine("GET /servicios/buscadorSorteos?fechaInicioInclusiva={fechaInicioInclusiva}"
+                + "&fechaFinInclusiva={fechaFinInclusiva}&game_id=LNAC&celebrados=true")
+        List<SorteoNavidadResponse> getResumenNavidad(
+                @Param("fechaInicioInclusiva") String fechaInicioInclusiva,
+                @Param("fechaFinInclusiva") String fechaFinInclusiva
+        );
+
+        @RequestLine("GET /servicios/buscadorSorteosConEscrutinio?fechaInicioInclusiva={fechaInicioInclusiva}"
+                + "&fechaFinInclusiva={fechaFinInclusiva}&game_id=LNAC&limiteMaxResultados=1")
+        List<SorteoConEscrutinioResponse> getSorteosConEscrutinio(
+                @Param("fechaInicioInclusiva") String fechaInicioInclusiva,
+                @Param("fechaFinInclusiva") String fechaFinInclusiva
+        );
+
+        @RequestLine("GET /servicios/premioDecimoWeb?idsorteo={idsorteo}")
+        Response getPremioDecimo(@Param("idsorteo") String idsorteo);
+    }
+
+    private static class PremioDecimoCache {
+        private String fechaConsulta;
+        private String estado;
+        private String fechaSorteo;
+        private int importePorDefecto;
+        private Map<String, Long> premiosPorDecimo;
     }
 
     private static class PrefixedJsonDecoder implements Decoder {

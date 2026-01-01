@@ -33,4 +33,17 @@ public class PremioConverter {
         premio.setEstado(EstadoSorteo.get(busqueda.getStatus()));
         return premio;
     }
+
+    public static Premio get(String estado, String fechaSorteo, long premio, int importePorDefecto) {
+        Premio resultado = new Premio();
+        if (premio != 0 && importePorDefecto > 0) {
+            resultado.setCantidad(premio / (double) importePorDefecto);
+        } else {
+            resultado.setCantidad(0D);
+        }
+        SorteoResponseConverterUtils.setFechaActualizacion(fechaSorteo, resultado::setFechaActualizacion,
+                resultado::setFechaActualizacionAndroid);
+        resultado.setEstado(SorteoResponseConverterUtils.getEstado(estado));
+        return resultado;
+    }
 }
