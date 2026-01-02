@@ -28,6 +28,8 @@ Conexion conexion = new Conexion(3000, 8000, retryer);
 Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 ```
 
+Nota: el numero de decimo debe ser numerico. Si tiene mas de 5 digitos, se usan los ultimos 5.
+
 ### Changelog ###
 
 * 4.0.0

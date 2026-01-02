@@ -198,6 +198,37 @@ public class ConexionTest {
         Assert.assertNull(resumen);
     }
 
+    @Test
+    public void testResumenNinoListaVaciaDevuelveNull() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[]"));
+
+        Conexion conexion = createConexion();
+        ResumenNino resumen = conexion.getResumenNino();
+
+        Assert.assertNull(resumen);
+    }
+
+    @Test
+    public void testPremioSinCompruebeDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJsonSinCompruebe()));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(0D, premio.getCantidad(), 0.001);
+        Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
+    }
+
     private Conexion createConexion() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HostRewriteInterceptor(server.url("/")))
@@ -245,6 +276,12 @@ public class ConexionTest {
         return "{"
                 + "\"importePorDefecto\":2000,"
                 + "\"compruebe\":[{\"decimo\":\"012345\",\"prize\":100000}]"
+                + "}";
+    }
+
+    private String premioDecimoJsonSinCompruebe() {
+        return "{"
+                + "\"importePorDefecto\":2000"
                 + "}";
     }
 

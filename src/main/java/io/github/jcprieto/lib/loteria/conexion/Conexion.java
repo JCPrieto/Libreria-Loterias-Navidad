@@ -141,24 +141,11 @@ public class Conexion {
         return cookieHeader == null || cookieHeader.isBlank() ? null : cookieHeader;
     }
 
-    public Premio getPremio(Sorteo sorteo, String numero) throws IOException {
-        try {
-            warmUpLoterias();
-            PremioDecimoCache cache = getPremioCache(sorteo);
-            if (cache == null) {
-                return null;
-            }
-            String normalized = normalizeDecimo(numero);
-            if (normalized == null) {
-                return null;
-            }
-            long premio = cache.premiosPorDecimo.getOrDefault(normalized, 0L);
-            return PremioConverter.get(cache.estado, cache.fechaSorteo, premio, cache.importePorDefecto);
-        } catch (FeignException e) {
+    private static <T> T getFirstOrNull(List<T> items) {
+        if (items == null || items.isEmpty()) {
             return null;
-        } catch (RuntimeException e) {
-            throw new IOException("Error al obtener el premio", e);
         }
+        return items.getFirst();
     }
 
     private static String normalizeCmsCookie(String cookie) {
@@ -166,11 +153,48 @@ public class Conexion {
         return trimmed.contains("=") ? trimmed : "cms=" + trimmed;
     }
 
-    private static <T> T getFirstOrNull(List<T> items) {
-        if (items == null || items.isEmpty()) {
-            return null;
+    private static boolean isNumeric(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            if (!Character.isDigit(value.charAt(i))) {
+                return false;
+            }
         }
-        return items.get(0);
+        return true;
+    }
+
+    private static String summarizeBody(String body) {
+        String normalized = body == null ? "" : body.replace('\n', ' ').replace('\r', ' ').trim();
+        if (normalized.length() <= 200) {
+            return normalized;
+        }
+        return normalized.substring(0, 200) + "...";
+    }
+
+    private static Premio emptyPremio() {
+        Premio premio = new Premio();
+        premio.setCantidad(0D);
+        return premio;
+    }
+
+    public Premio getPremio(Sorteo sorteo, String numero) throws IOException {
+        try {
+            warmUpLoterias();
+            PremioDecimoCache cache = getPremioCache(sorteo);
+            if (cache == null) {
+                return emptyPremio();
+            }
+            String normalized = normalizeDecimo(numero);
+            if (normalized == null) {
+                return emptyPremio();
+            }
+            long premio = cache.premiosPorDecimo.getOrDefault(normalized, 0L);
+            return PremioConverter.get(cache.estado, cache.fechaSorteo, premio, cache.importePorDefecto);
+        } catch (FeignException e) {
+            Logger.error(e);
+            return emptyPremio();
+        } catch (RuntimeException e) {
+            throw new IOException("Error al obtener el premio", e);
+        }
     }
 
     private PremioDecimoCache getPremioCache(Sorteo sorteo) throws IOException {
@@ -250,7 +274,12 @@ public class Conexion {
         if ("E019".equals(trimmed) || "\"E019\"".equals(trimmed)) {
             throw new PremioDecimoNoDisponibleException("Premio no disponible para el sorteo solicitado");
         }
-        return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
+        try {
+            return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
+        } catch (IOException e) {
+            Logger.error("Error al parsear premioDecimo: " + summarizeBody(trimmed), e);
+            throw e;
+        }
     }
 
     private PremioDecimoCache buildPremioCache(String fechaConsulta, SorteoConEscrutinioResponse sorteoResponse,
@@ -286,6 +315,9 @@ public class Conexion {
         }
         String trimmed = numero.trim();
         if (trimmed.isEmpty()) {
+            return null;
+        }
+        if (!isNumeric(trimmed)) {
             return null;
         }
         String normalized = trimmed.length() > 5 ? trimmed.substring(trimmed.length() - 5) : trimmed;

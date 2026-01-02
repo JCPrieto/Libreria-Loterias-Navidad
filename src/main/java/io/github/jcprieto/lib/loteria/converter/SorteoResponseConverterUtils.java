@@ -46,7 +46,7 @@ public final class SorteoResponseConverterUtils {
         if (premios == null || premios.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(premios.get(0));
+        return Optional.ofNullable(premios.getFirst());
     }
 
     public static List<String> extractDecimos(List<SorteoNavidadResponse.PremioDetalle> premios, boolean padToFive) {
@@ -84,10 +84,10 @@ public final class SorteoResponseConverterUtils {
                     dateSetter.accept(date);
                 }
             } catch (ParseException e) {
-                Logger.error(e);
+                Logger.error("Formato de fecha no valido: " + fechaSorteo, e);
             }
         } catch (RuntimeException e) {
-            Logger.error(e);
+            Logger.error("Error al parsear fecha: " + fechaSorteo, e);
         }
     }
 

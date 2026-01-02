@@ -40,8 +40,9 @@ public class Logger {
         LOG.log(Level.SEVERE, null, e);
     }
 
-    public static void info(Exception e) {
+    public static void error(String message, Exception e) {
         init();
-        LOG.log(Level.INFO, null, e);
+        LOG.log(Level.SEVERE, message, e);
     }
+
 }
