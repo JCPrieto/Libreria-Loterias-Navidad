@@ -30,6 +30,8 @@ Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 
 Nota: el numero de decimo debe ser numerico. Si tiene mas de 5 digitos, se usan los ultimos 5.
 
+Logs: para desactivar el log a fichero, iniciar la JVM con `-Dloteria.logger.disableFile=true`.
+
 ### Changelog ###
 
 * 4.0.0

@@ -18,6 +18,9 @@ public class Logger {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
         String archivo = "log_" + hoy.format(dtf) + ".log";
         try {
+            if (Boolean.getBoolean("loteria.logger.disableFile")) {
+                return;
+            }
             fh = new FileHandler(archivo, true);
             LOG.addHandler(fh);
             LOG.setUseParentHandlers(false);
