@@ -4,9 +4,37 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>es.jklabs.lib.loteria</groupId>
-    <artifactId>Libreria_Loterias_Navidad</artifactId>
+    <name>Librería Loterías de Navidad</name>
+    <description>Librería para comprobar los premios de la última lotería de Navidad y/o El Niño de España</description>
+    <url>https://github.com/JCPrieto/Libreria-Loterias-Navidad</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/JCPrieto/Libreria-Loterias-Navidad.git</connection>
+        <developerConnection>scm:git:https://github.com/JCPrieto/Libreria-Loterias-Navidad.git</developerConnection>
+        <url>https://github.com/JCPrieto/Libreria-Loterias-Navidad</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>JCPrieto</id>
+            <name>Juan Carlos Prieto</name>
+            <email>JuanC.Prieto.Silos@gmail.com</email>
+            <url>https://www.jcprieto.es</url>
+        </developer>
+    </developers>
+
+    <groupId>io.github.jcprieto</groupId>
+    <artifactId>loteria-navidad</artifactId>
     <version>4.0.0</version>
+    <packaging>jar</packaging>
     <build>
         <testSourceDirectory>src/test/java/</testSourceDirectory>
         <plugins>
@@ -14,11 +42,76 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.1</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.9.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                    <waitUntil>published</waitUntil>
+                    <checksums>required</checksums>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <doclint>none</doclint>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgExecutable>gpg</gpgExecutable>
+                    <keyname>558442263B6AC29B9FF4AEB5F320065B4D152C59</keyname>
+                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                </configuration>
             </plugin>
         </plugins>
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
     </properties>
