@@ -48,8 +48,8 @@ public class Conexion {
     private static final String LOTERIAS_USER_AGENT = "PostmanRuntime/7.51.0";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final LoteriaResultadosApi resultadosApi;
-    private static InMemoryCookieJar cookieJar;
-    private static String cmsCookie;
+    private final InMemoryCookieJar cookieJar;
+    private final String cmsCookie;
     private final okhttp3.OkHttpClient rawClient;
     private final AtomicBoolean loteriasWarmup = new AtomicBoolean(false);
     private final Map<Sorteo, PremioDecimoCache> premioCache = new HashMap<>();
@@ -85,7 +85,7 @@ public class Conexion {
         }
         cookieJar = jar;
         this.rawClient = client;
-        Conexion.cmsCookie = cmsCookie;
+        this.cmsCookie = cmsCookie;
         Feign.Builder baseBuilder = Feign.builder()
                 .client(new OkHttpClient(this.rawClient))
                 .decoder(new PrefixedJsonDecoder())
@@ -115,7 +115,7 @@ public class Conexion {
         return fechaSorteo.format(DATE_FORMAT);
     }
 
-    private static RequestInterceptor loteriasHeaders() {
+    private RequestInterceptor loteriasHeaders() {
         return template -> {
             template.header("User-Agent", LOTERIAS_USER_AGENT);
             template.header("Accept", "*/*");
@@ -130,7 +130,7 @@ public class Conexion {
         };
     }
 
-    private static String getCmsCookieHeader() {
+    private String getCmsCookieHeader() {
         if (cmsCookie != null && !cmsCookie.isBlank()) {
             return normalizeCmsCookie(cmsCookie);
         }
