@@ -17,33 +17,44 @@ public class PremioConverter {
 
     public static Premio get(Busqueda busqueda) {
         Premio premio = new Premio();
-        if (busqueda.getPremio() != 0) {
-            premio.setCantidad(busqueda.getPremio() / 20D);
-        } else {
-            premio.setCantidad(0D);
-        }
-        try {
-            premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(busqueda.getTimestamp()),
-                    ZoneId.of("Europe/Madrid")));
-        } catch (NoClassDefFoundError n) {
-            Calendar date = Calendar.getInstance();
-            date.setTimeInMillis(busqueda.getTimestamp() * 1000L);
-            premio.setFechaActualizacionAndroid(date.getTime());
-        }
+        setCantidad(premio, busqueda.getPremio(), 20);
+        setFechaActualizacionFromTimestamp(busqueda.getTimestamp(), premio);
         premio.setEstado(EstadoSorteo.get(busqueda.getStatus()));
         return premio;
     }
 
     public static Premio get(String estado, String fechaSorteo, long premio, int importePorDefecto) {
         Premio resultado = new Premio();
-        if (premio != 0 && importePorDefecto > 0) {
-            resultado.setCantidad(premio / (double) importePorDefecto);
-        } else {
-            resultado.setCantidad(0D);
-        }
-        SorteoResponseConverterUtils.setFechaActualizacion(fechaSorteo, resultado::setFechaActualizacion,
-                resultado::setFechaActualizacionAndroid);
+        setCantidad(resultado, premio, importePorDefecto);
+        setFechaActualizacionFromSorteo(fechaSorteo, resultado);
         resultado.setEstado(SorteoResponseConverterUtils.getEstado(estado));
         return resultado;
+    }
+
+    private static void setCantidad(Premio premio, long cantidad, int divisor) {
+        premio.setCantidad(calculateCantidad(cantidad, divisor));
+    }
+
+    private static double calculateCantidad(long cantidad, int divisor) {
+        if (cantidad != 0 && divisor > 0) {
+            return cantidad / (double) divisor;
+        }
+        return 0D;
+    }
+
+    private static void setFechaActualizacionFromTimestamp(long timestamp, Premio premio) {
+        try {
+            premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
+                    ZoneId.of("Europe/Madrid")));
+        } catch (NoClassDefFoundError n) {
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(timestamp * 1000L);
+            premio.setFechaActualizacionAndroid(date.getTime());
+        }
+    }
+
+    private static void setFechaActualizacionFromSorteo(String fechaSorteo, Premio premio) {
+        SorteoResponseConverterUtils.setFechaActualizacion(fechaSorteo, premio::setFechaActualizacion,
+                premio::setFechaActualizacionAndroid);
     }
 }
