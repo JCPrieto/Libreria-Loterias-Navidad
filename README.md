@@ -39,6 +39,25 @@ Errores y estados:
 - `getResumenNavidad` y `getResumenNino` devuelven `null` si no hay datos o hay error de red.
 - `getPremio` devuelve un `Premio` con `cantidad=0` y `estado=NO_INICIADO` cuando no hay datos o hay error.
 
+### Dependencia (Maven Central) ###
+
+Maven:
+
+```xml
+
+<dependency>
+  <groupId>io.github.jcprieto</groupId>
+  <artifactId>loteria-navidad</artifactId>
+  <version>4.0.0</version>
+</dependency>
+```
+
+Gradle:
+
+```gradle
+implementation "io.github.jcprieto:loteria-navidad:4.0.0"
+```
+
 ### Changelog ###
 
 * 4.0.0
