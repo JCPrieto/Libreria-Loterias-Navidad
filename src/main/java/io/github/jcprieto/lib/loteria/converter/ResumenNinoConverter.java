@@ -28,30 +28,10 @@ public class ResumenNinoConverter {
         if (premios.getPremio3() > -1) {
             resumen.setTercero(String.format("%05d", premios.getPremio3()));
         }
-        resumen.setCuatroCifras(new ArrayList<>());
-        for (String extraccion : premios.getExtracciones4cifras()) {
-            if (!extraccion.equals("-1")) {
-                resumen.getCuatroCifras().add(extraccion);
-            }
-        }
-        resumen.setTresCifras(new ArrayList<>());
-        for (String extraccion : premios.getExtracciones3cifras()) {
-            if (!extraccion.equals("-1")) {
-                resumen.getTresCifras().add(extraccion);
-            }
-        }
-        resumen.setDosCifras(new ArrayList<>());
-        for (String extraccion : premios.getExtracciones2cifras()) {
-            if (!extraccion.equals("-1")) {
-                resumen.getDosCifras().add(extraccion);
-            }
-        }
-        resumen.setReintegros(new ArrayList<>());
-        for (String extraccion : premios.getReintegros()) {
-            if (!extraccion.equals("-1")) {
-                resumen.getReintegros().add(extraccion);
-            }
-        }
+        resumen.setCuatroCifras(filterExtracciones(premios.getExtracciones4cifras()));
+        resumen.setTresCifras(filterExtracciones(premios.getExtracciones3cifras()));
+        resumen.setDosCifras(filterExtracciones(premios.getExtracciones2cifras()));
+        resumen.setReintegros(filterExtracciones(premios.getReintegros()));
         setFechaActualizacion(premios, resumen);
         resumen.setUrlPDF(premios.getPdfURL());
         resumen.setEstado(EstadoSorteo.get(premios.getStatus()));
@@ -103,5 +83,18 @@ public class ResumenNinoConverter {
 
     private static String getDecimo(SorteoNavidadResponse.PremioDetalle premio) {
         return premio == null ? null : premio.getDecimo();
+    }
+
+    private static ArrayList<String> filterExtracciones(String[] extracciones) {
+        ArrayList<String> resultado = new ArrayList<>();
+        if (extracciones == null) {
+            return resultado;
+        }
+        for (String extraccion : extracciones) {
+            if (!"-1".equals(extraccion)) {
+                resultado.add(extraccion);
+            }
+        }
+        return resultado;
     }
 }
