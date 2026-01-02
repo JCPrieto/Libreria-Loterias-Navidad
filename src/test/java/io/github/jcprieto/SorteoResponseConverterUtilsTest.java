@@ -46,6 +46,12 @@ public class SorteoResponseConverterUtilsTest {
         Assert.assertNull(legacy.get());
     }
 
+    @Test
+    public void testExtractDecimosConListaNulaOVacia() {
+        Assert.assertTrue(SorteoResponseConverterUtils.extractDecimos(null, false).isEmpty());
+        Assert.assertTrue(SorteoResponseConverterUtils.extractDecimos(List.of(), true).isEmpty());
+    }
+
     private SorteoNavidadResponse.PremioDetalle premio(String decimo) {
         SorteoNavidadResponse.PremioDetalle premio = new SorteoNavidadResponse.PremioDetalle();
         premio.setDecimo(decimo);
