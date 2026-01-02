@@ -50,8 +50,10 @@ public class ResumenNavidadConverter {
         String base = urlBase == null ? "" : urlBase;
         resumen.setGordo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getPrimerPremio())));
         resumen.setSegundo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getSegundoPremio())));
-        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(
-                getDecimo(SorteoResponseConverterUtils.getFirst(sorteo.getTercerosPremios()))));
+        SorteoNavidadResponse.PremioDetalle tercero = SorteoResponseConverterUtils
+                .getFirst(sorteo.getTercerosPremios())
+                .orElse(null);
+        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(getDecimo(tercero)));
         resumen.setCuarto(new ArrayList<>());
         resumen.getCuarto().addAll(SorteoResponseConverterUtils.extractDecimos(sorteo.getCuartosPremios(), true));
         resumen.setQuinto(new ArrayList<>());

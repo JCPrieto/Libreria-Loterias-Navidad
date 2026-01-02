@@ -6,10 +6,7 @@ import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.function.Consumer;
 
 public final class SorteoResponseConverterUtils {
@@ -41,11 +38,12 @@ public final class SorteoResponseConverterUtils {
                 decimo;
     }
 
-    public static SorteoNavidadResponse.PremioDetalle getFirst(List<SorteoNavidadResponse.PremioDetalle> premios) {
+    public static Optional<SorteoNavidadResponse.PremioDetalle> getFirst(
+            List<SorteoNavidadResponse.PremioDetalle> premios) {
         if (premios == null || premios.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
-        return premios.getFirst();
+        return Optional.ofNullable(premios.getFirst());
     }
 
     public static List<String> extractDecimos(List<SorteoNavidadResponse.PremioDetalle> premios, boolean padToFive) {

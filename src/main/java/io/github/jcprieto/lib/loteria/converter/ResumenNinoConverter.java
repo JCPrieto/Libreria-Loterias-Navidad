@@ -46,8 +46,10 @@ public class ResumenNinoConverter {
         String base = urlBase == null ? "" : urlBase;
         resumen.setPrimero(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getPrimerPremio())));
         resumen.setSegundo(SorteoResponseConverterUtils.formatDecimo(getDecimo(sorteo.getSegundoPremio())));
-        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(
-                getDecimo(SorteoResponseConverterUtils.getFirst(sorteo.getTercerosPremios()))));
+        SorteoNavidadResponse.PremioDetalle tercero = SorteoResponseConverterUtils
+                .getFirst(sorteo.getTercerosPremios())
+                .orElse(null);
+        resumen.setTercero(SorteoResponseConverterUtils.formatDecimo(getDecimo(tercero)));
         resumen.setCuatroCifras(new ArrayList<>(
                 SorteoResponseConverterUtils.extractDecimos(sorteo.getExtraccionesDeCuatroCifras(), false)));
         resumen.setTresCifras(new ArrayList<>(
