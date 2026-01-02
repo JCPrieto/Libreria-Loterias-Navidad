@@ -8,6 +8,7 @@ import io.github.jcprieto.lib.loteria.converter.PremioConverter;
 import io.github.jcprieto.lib.loteria.converter.ResumenNavidadConverter;
 import io.github.jcprieto.lib.loteria.converter.ResumenNinoConverter;
 import io.github.jcprieto.lib.loteria.converter.SorteoResponseConverterUtils;
+import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.enumeradores.Sorteo;
 import io.github.jcprieto.lib.loteria.excepciones.PremioDecimoNoDisponibleException;
 import io.github.jcprieto.lib.loteria.model.Premio;
@@ -173,6 +174,7 @@ public class Conexion {
     private static Premio emptyPremio() {
         Premio premio = new Premio();
         premio.setCantidad(0D);
+        premio.setEstado(EstadoSorteo.NO_INICIADO);
         return premio;
     }
 

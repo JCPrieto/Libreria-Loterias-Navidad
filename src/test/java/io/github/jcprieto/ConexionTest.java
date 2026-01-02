@@ -157,7 +157,7 @@ public class ConexionTest {
 
         Assert.assertNotNull(premio);
         Assert.assertEquals(0D, premio.getCantidad(), 0.001);
-        Assert.assertNull(premio.getEstado());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
     }
 
     @Test
