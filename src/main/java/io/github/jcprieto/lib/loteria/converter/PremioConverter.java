@@ -11,6 +11,8 @@ import java.util.Calendar;
 
 public class PremioConverter {
 
+    private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
+
     private PremioConverter() {
 
     }
@@ -45,7 +47,7 @@ public class PremioConverter {
     private static void setFechaActualizacionFromTimestamp(long timestamp, Premio premio) {
         try {
             premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
-                    ZoneId.of("Europe/Madrid")));
+                    MADRID_ZONE));
         } catch (NoClassDefFoundError n) {
             Calendar date = Calendar.getInstance();
             date.setTimeInMillis(timestamp * 1000L);

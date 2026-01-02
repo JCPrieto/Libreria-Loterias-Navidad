@@ -82,6 +82,31 @@ public class ResumenNinoConverterTest {
         Assert.assertEquals("00045", resumen.getTercero());
     }
 
+    @Test
+    public void testGetDesdePremiosConExtraccionesNulas() {
+        Premios premios = new Premios();
+        premios.setPremio1(1);
+        premios.setPremio2(2);
+        premios.setPremio3(3);
+        premios.setExtracciones4cifras(null);
+        premios.setExtracciones3cifras(null);
+        premios.setExtracciones2cifras(null);
+        premios.setReintegros(null);
+        premios.setTimestamp(1700000000L);
+        premios.setStatus(1);
+
+        ResumenNino resumen = ResumenNinoConverter.get(premios);
+
+        Assert.assertNotNull(resumen.getCuatroCifras());
+        Assert.assertTrue(resumen.getCuatroCifras().isEmpty());
+        Assert.assertNotNull(resumen.getTresCifras());
+        Assert.assertTrue(resumen.getTresCifras().isEmpty());
+        Assert.assertNotNull(resumen.getDosCifras());
+        Assert.assertTrue(resumen.getDosCifras().isEmpty());
+        Assert.assertNotNull(resumen.getReintegros());
+        Assert.assertTrue(resumen.getReintegros().isEmpty());
+    }
+
     private SorteoNavidadResponse.PremioDetalle premio(String decimo) {
         SorteoNavidadResponse.PremioDetalle premio = new SorteoNavidadResponse.PremioDetalle();
         premio.setDecimo(decimo);

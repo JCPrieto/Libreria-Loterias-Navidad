@@ -166,6 +166,13 @@ public class Conexion {
         return trimmed.contains("=") ? trimmed : "cms=" + trimmed;
     }
 
+    private static <T> T getFirstOrNull(List<T> items) {
+        if (items == null || items.isEmpty()) {
+            return null;
+        }
+        return items.get(0);
+    }
+
     private PremioDecimoCache getPremioCache(Sorteo sorteo) throws IOException {
         String fecha = getFechaSorteo(sorteo);
         synchronized (premioCache) {
@@ -175,10 +182,10 @@ public class Conexion {
             }
         }
         List<SorteoConEscrutinioResponse> sorteos = resultadosApi.getSorteosConEscrutinio(fecha, fecha);
-        if (sorteos == null || sorteos.isEmpty()) {
+        SorteoConEscrutinioResponse sorteoResponse = getFirstOrNull(sorteos);
+        if (sorteoResponse == null) {
             return null;
         }
-        SorteoConEscrutinioResponse sorteoResponse = sorteos.getFirst();
         if (sorteoResponse.getIdSorteo() == null || sorteoResponse.getIdSorteo().isBlank()) {
             return null;
         }
@@ -199,32 +206,16 @@ public class Conexion {
             warmUpLoterias();
             String fecha = getUltimoSeisEnero();
             List<SorteoNavidadResponse> sorteos = resultadosApi.getResumenNavidad(fecha, fecha);
-            if (sorteos == null || sorteos.isEmpty()) {
+            SorteoNavidadResponse sorteo = getFirstOrNull(sorteos);
+            if (sorteo == null) {
                 return null;
             }
-            return ResumenNinoConverter.get(BASE_URL_SORTEOS, sorteos.getFirst());
+            return ResumenNinoConverter.get(BASE_URL_SORTEOS, sorteo);
         } catch (FeignException e) {
             Logger.error(e);
             return null;
         } catch (RuntimeException e) {
             throw new IOException("Error al obtener el resumen del Nino", e);
-        }
-    }
-
-    public ResumenNavidad getResumenNavidad() throws IOException {
-        try {
-            warmUpLoterias();
-            String fecha = getUltimoVeintidosDiciembre();
-            List<SorteoNavidadResponse> sorteos = resultadosApi.getResumenNavidad(fecha, fecha);
-            if (sorteos == null || sorteos.isEmpty()) {
-                return null;
-            }
-            return ResumenNavidadConverter.get(BASE_URL_SORTEOS, sorteos.getFirst());
-        } catch (FeignException e) {
-            Logger.error(e);
-            return null;
-        } catch (RuntimeException e) {
-            throw new IOException("Error al obtener el resumen de Navidad", e);
         }
     }
 
@@ -299,6 +290,24 @@ public class Conexion {
         }
         String normalized = trimmed.length() > 5 ? trimmed.substring(trimmed.length() - 5) : trimmed;
         return SorteoResponseConverterUtils.formatDecimo(normalized);
+    }
+
+    public ResumenNavidad getResumenNavidad() throws IOException {
+        try {
+            warmUpLoterias();
+            String fecha = getUltimoVeintidosDiciembre();
+            List<SorteoNavidadResponse> sorteos = resultadosApi.getResumenNavidad(fecha, fecha);
+            SorteoNavidadResponse sorteo = getFirstOrNull(sorteos);
+            if (sorteo == null) {
+                return null;
+            }
+            return ResumenNavidadConverter.get(BASE_URL_SORTEOS, sorteo);
+        } catch (FeignException e) {
+            Logger.error(e);
+            return null;
+        } catch (RuntimeException e) {
+            throw new IOException("Error al obtener el resumen de Navidad", e);
+        }
     }
 
     private interface LoteriaResultadosApi {

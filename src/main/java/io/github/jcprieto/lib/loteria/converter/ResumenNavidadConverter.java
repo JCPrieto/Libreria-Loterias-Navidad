@@ -5,11 +5,7 @@ import io.github.jcprieto.lib.loteria.model.json.navidad.Premios;
 import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import io.github.jcprieto.lib.loteria.model.navidad.ResumenNavidad;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class ResumenNavidadConverter {
 
@@ -65,14 +61,11 @@ public class ResumenNavidadConverter {
     }
 
     private static void setFechaActualizacion(Premios premios, ResumenNavidad resumen) {
-        try {
-            resumen.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(premios.getTimestamp()), ZoneId
-                    .systemDefault()));
-        } catch (NoClassDefFoundError n) {
-            Calendar date = Calendar.getInstance();
-            date.setTimeInMillis(premios.getTimestamp() * 1000L);
-            resumen.setFechaActualizacionAndroid(date.getTime());
-        }
+        SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
+                premios.getTimestamp(),
+                resumen::setFechaActualizacion,
+                resumen::setFechaActualizacionAndroid
+        );
     }
 
     private static void setFechaActualizacion(String fechaSorteo, ResumenNavidad resumen) {

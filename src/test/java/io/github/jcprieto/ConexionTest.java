@@ -185,6 +185,19 @@ public class ConexionTest {
         Assert.assertNull(resumen);
     }
 
+    @Test
+    public void testResumenNavidadListaVaciaDevuelveNull() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[]"));
+
+        Conexion conexion = createConexion();
+        ResumenNavidad resumen = conexion.getResumenNavidad();
+
+        Assert.assertNull(resumen);
+    }
+
     private Conexion createConexion() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HostRewriteInterceptor(server.url("/")))

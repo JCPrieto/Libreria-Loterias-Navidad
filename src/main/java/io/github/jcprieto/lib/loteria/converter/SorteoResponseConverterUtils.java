@@ -6,7 +6,9 @@ import io.github.jcprieto.utilidades.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -44,7 +46,7 @@ public final class SorteoResponseConverterUtils {
         if (premios == null || premios.isEmpty()) {
             return Optional.empty();
         }
-        return Optional.ofNullable(premios.getFirst());
+        return Optional.ofNullable(premios.get(0));
     }
 
     public static List<String> extractDecimos(List<SorteoNavidadResponse.PremioDetalle> premios, boolean padToFive) {
@@ -56,8 +58,12 @@ public final class SorteoResponseConverterUtils {
             if (premio == null || premio.getDecimo() == null) {
                 continue;
             }
-            String decimo = padToFive ? formatDecimo(premio.getDecimo()) : premio.getDecimo();
-            if (decimo != null) {
+            String rawDecimo = premio.getDecimo().trim();
+            if (rawDecimo.isEmpty()) {
+                continue;
+            }
+            String decimo = padToFive ? formatDecimo(rawDecimo) : rawDecimo;
+            if (decimo != null && !decimo.isEmpty()) {
                 resultado.add(decimo);
             }
         }
@@ -78,10 +84,21 @@ public final class SorteoResponseConverterUtils {
                     dateSetter.accept(date);
                 }
             } catch (ParseException e) {
-                Logger.info(e);
+                Logger.error(e);
             }
         } catch (RuntimeException e) {
             Logger.error(e);
+        }
+    }
+
+    public static void setFechaActualizacionFromTimestamp(long timestamp, Consumer<LocalDateTime> localSetter,
+                                                          Consumer<Date> dateSetter) {
+        try {
+            localSetter.accept(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault()));
+        } catch (NoClassDefFoundError n) {
+            Calendar date = Calendar.getInstance();
+            date.setTimeInMillis(timestamp * 1000L);
+            dateSetter.accept(date.getTime());
         }
     }
 }
