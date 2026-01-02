@@ -14,6 +14,8 @@ import java.util.function.Consumer;
 
 public final class SorteoResponseConverterUtils {
 
+    private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
+
     private SorteoResponseConverterUtils() {
     }
 
@@ -94,7 +96,7 @@ public final class SorteoResponseConverterUtils {
     public static void setFechaActualizacionFromTimestamp(long timestamp, Consumer<LocalDateTime> localSetter,
                                                           Consumer<Date> dateSetter) {
         try {
-            localSetter.accept(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault()));
+            localSetter.accept(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), MADRID_ZONE));
         } catch (NoClassDefFoundError n) {
             Calendar date = Calendar.getInstance();
             date.setTimeInMillis(timestamp * 1000L);

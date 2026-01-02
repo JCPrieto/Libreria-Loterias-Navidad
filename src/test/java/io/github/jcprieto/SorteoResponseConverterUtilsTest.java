@@ -41,7 +41,7 @@ public class SorteoResponseConverterUtilsTest {
         );
 
         LocalDateTime esperado = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
-                ZoneId.systemDefault());
+                ZoneId.of("Europe/Madrid"));
         Assert.assertEquals(esperado, local.get());
         Assert.assertNull(legacy.get());
     }
