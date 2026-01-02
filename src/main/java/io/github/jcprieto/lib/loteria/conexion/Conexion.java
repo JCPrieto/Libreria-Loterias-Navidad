@@ -178,6 +178,9 @@ public class Conexion {
         return premio;
     }
 
+    /**
+     * Obtiene el premio para un decimo. Si hay error o datos no disponibles, devuelve un Premio con cantidad 0.
+     */
     public Premio getPremio(Sorteo sorteo, String numero) throws IOException {
         try {
             warmUpLoterias();
@@ -227,6 +230,9 @@ public class Conexion {
         return cache;
     }
 
+    /**
+     * Obtiene el resumen del sorteo del Nino. Devuelve null si no hay datos o hay error de red.
+     */
     public ResumenNino getResumenNino() throws IOException {
         try {
             warmUpLoterias();
@@ -326,6 +332,9 @@ public class Conexion {
         return SorteoResponseConverterUtils.formatDecimo(normalized);
     }
 
+    /**
+     * Obtiene el resumen del sorteo de Navidad. Devuelve null si no hay datos o hay error de red.
+     */
     public ResumenNavidad getResumenNavidad() throws IOException {
         try {
             warmUpLoterias();

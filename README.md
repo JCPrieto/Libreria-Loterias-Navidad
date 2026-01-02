@@ -34,6 +34,11 @@ Logs: para desactivar el log a fichero, iniciar la JVM con `-Dloteria.logger.dis
 
 getPremio: en caso de error o datos no disponibles, devuelve un `Premio` con `cantidad=0`.
 
+Errores y estados:
+
+- `getResumenNavidad` y `getResumenNino` devuelven `null` si no hay datos o hay error de red.
+- `getPremio` devuelve un `Premio` con `cantidad=0` y `estado=NO_INICIADO` cuando no hay datos o hay error.
+
 ### Changelog ###
 
 * 4.0.0
