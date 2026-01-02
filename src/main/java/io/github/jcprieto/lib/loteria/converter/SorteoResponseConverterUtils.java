@@ -2,6 +2,7 @@ package io.github.jcprieto.lib.loteria.converter;
 
 import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
+import io.github.jcprieto.utilidades.Logger;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -76,11 +77,11 @@ public final class SorteoResponseConverterUtils {
                 if (date != null) {
                     dateSetter.accept(date);
                 }
-            } catch (ParseException ignored) {
-                //
+            } catch (ParseException e) {
+                Logger.info(e);
             }
-        } catch (RuntimeException ignored) {
-            //
+        } catch (RuntimeException e) {
+            Logger.error(e);
         }
     }
 }

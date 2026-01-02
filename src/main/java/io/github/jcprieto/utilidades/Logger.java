@@ -40,4 +40,8 @@ public class Logger {
         LOG.log(Level.SEVERE, null, e);
     }
 
+    public static void info(Exception e) {
+        init();
+        LOG.log(Level.INFO, null, e);
+    }
 }
