@@ -32,6 +32,8 @@ Nota: el numero de decimo debe ser numerico. Si tiene mas de 5 digitos, se usan 
 
 Logs: para desactivar el log a fichero, iniciar la JVM con `-Dloteria.logger.disableFile=true`.
 
+getPremio: en caso de error o datos no disponibles, devuelve un `Premio` con `cantidad=0`.
+
 ### Changelog ###
 
 * 4.0.0

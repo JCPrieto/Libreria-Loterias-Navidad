@@ -60,4 +60,13 @@ public class PremioConverterTest {
         Assert.assertEquals(EstadoSorteo.EN_PROCESO, premio.getEstado());
         Assert.assertNotNull(premio.getFechaActualizacion());
     }
+
+    @Test
+    public void testGetDesdeSorteoConImporteNegativo() {
+        Premio premio = PremioConverter.get("cerrado", "2025-12-22 08:30:00", 12000L, -5);
+
+        Assert.assertEquals(0D, premio.getCantidad(), 0.0001);
+        Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
+        Assert.assertNotNull(premio.getFechaActualizacion());
+    }
 }

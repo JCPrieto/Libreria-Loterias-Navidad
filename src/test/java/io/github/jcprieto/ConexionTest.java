@@ -143,6 +143,24 @@ public class ConexionTest {
     }
 
     @Test
+    public void testPremioConDecimoNoNumericoDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJson()));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12A45");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(0D, premio.getCantidad(), 0.001);
+        Assert.assertNull(premio.getEstado());
+    }
+
+    @Test
     public void testPremioUsaCache() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
