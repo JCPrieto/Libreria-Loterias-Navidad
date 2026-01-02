@@ -4,10 +4,7 @@ import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.model.json.navidad.Premios;
 import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import io.github.jcprieto.lib.loteria.model.navidad.ResumenNavidad;
-import io.github.jcprieto.utilidades.Logger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -85,21 +82,21 @@ public class ResumenNavidadConverter {
     }
 
     private static void getQuintoPremio(Premios premios, ResumenNavidad resumen) {
-        int i = 6;
-        boolean fin = false;
-        while (i <= 13 && !fin) {
-            try {
-                Method method = Premios.class.getDeclaredMethod("getNumero" + i);
-                int valor = (int) method.invoke(premios);
-                if (valor > -1) {
-                    resumen.getQuinto().add(String.format("%05d", valor));
-                    i++;
-                } else {
-                    fin = true;
-                }
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                fin = true;
-                Logger.error(e);
+        int[] numeros = {
+                premios.getNumero6(),
+                premios.getNumero7(),
+                premios.getNumero8(),
+                premios.getNumero9(),
+                premios.getNumero10(),
+                premios.getNumero11(),
+                premios.getNumero12(),
+                premios.getNumero13()
+        };
+        for (int numero : numeros) {
+            if (numero > -1) {
+                resumen.getQuinto().add(String.format("%05d", numero));
+            } else {
+                break;
             }
         }
     }
