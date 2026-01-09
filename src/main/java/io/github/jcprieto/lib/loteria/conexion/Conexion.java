@@ -17,11 +17,12 @@ import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoConEscrutinioResp
 import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import io.github.jcprieto.lib.loteria.model.navidad.ResumenNavidad;
 import io.github.jcprieto.lib.loteria.model.nino.ResumenNino;
-import io.github.jcprieto.utilidades.Logger;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -41,6 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class Conexion {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Conexion.class);
     private static final String BASE_URL_SORTEOS = "https://www.loteriasyapuestas.es";
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 10_000;
@@ -195,7 +197,7 @@ public class Conexion {
             long premio = cache.premiosPorDecimo.getOrDefault(normalized, 0L);
             return PremioConverter.get(cache.estado, cache.fechaSorteo, premio, cache.importePorDefecto);
         } catch (FeignException e) {
-            Logger.error(e);
+            LOG.error("Error al obtener el premio", e);
             return emptyPremio();
         } catch (RuntimeException e) {
             throw new IOException("Error al obtener el premio", e);
@@ -244,7 +246,7 @@ public class Conexion {
             }
             return ResumenNinoConverter.get(BASE_URL_SORTEOS, sorteo);
         } catch (FeignException e) {
-            Logger.error(e);
+            LOG.error("Error al obtener el resumen del Nino", e);
             return null;
         } catch (RuntimeException e) {
             throw new IOException("Error al obtener el resumen del Nino", e);
@@ -285,7 +287,7 @@ public class Conexion {
         try {
             return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
         } catch (IOException e) {
-            Logger.error("Error al parsear premioDecimo: " + summarizeBody(trimmed), e);
+            LOG.error("Error al parsear premioDecimo: {}", summarizeBody(trimmed), e);
             throw e;
         }
     }
@@ -346,7 +348,7 @@ public class Conexion {
             }
             return ResumenNavidadConverter.get(BASE_URL_SORTEOS, sorteo);
         } catch (FeignException e) {
-            Logger.error(e);
+            LOG.error("Error al obtener el resumen de Navidad", e);
             return null;
         } catch (RuntimeException e) {
             throw new IOException("Error al obtener el resumen de Navidad", e);

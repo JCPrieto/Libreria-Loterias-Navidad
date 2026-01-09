@@ -36,6 +36,6 @@
 
 ## Configuration & Compatibility Notes
 
-- Java 11 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
+- Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
 - Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping the changelog in `README.md`
   consistent with releases.

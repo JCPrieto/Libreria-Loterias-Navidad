@@ -1,11 +1,11 @@
 # Libreria-Loterias-Navidad
 
-Librería de conexión con la Api de Loterías y Apuestas dle Estado para obtener los resultados de las Loterías de Navidad
-y de El Niño
+Librería de conexión con la API de Loterías y Apuestas del Estado para obtener los resultados de las Loterías de Navidad
+y de El Niño.
 
-Actualmente esta librería está en uso en 2 aplicaciones de mi repositorio: LoteríasJava y LoteríasAndroid.
+Actualmente, esta librería está en uso en dos aplicaciones de mi repositorio: LoteríasJava y LoteríasAndroid.
 
-Dependencias añadidas para el cliente HTTP: OpenFeign + OkHttp.
+Cliente HTTP: OpenFeign + OkHttp.
 
 ### Uso ###
 
@@ -28,11 +28,79 @@ Conexion conexion = new Conexion(3000, 8000, retryer);
 Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 ```
 
-Nota: el numero de decimo debe ser numerico. Si tiene mas de 5 digitos, se usan los ultimos 5.
+Nota: el número de décimo debe ser numérico. Si tiene más de 5 dígitos, se usan los últimos 5.
 
-Logs: para desactivar el log a fichero, iniciar la JVM con `-Dloteria.logger.disableFile=true`.
+Logs: la librería usa SLF4J; el backend y la configuración los aporta la aplicación consumidora.
 
-getPremio: en caso de error o datos no disponibles, devuelve un `Premio` con `cantidad=0`.
+Nota de migración (5.0.0): se elimina el logger propio; añade un backend SLF4J en tu aplicación si quieres ver logs.
+
+Ejemplo de backend con Logback (app consumidora):
+
+Maven:
+
+```xml
+
+<dependency>
+  <groupId>ch.qos.logback</groupId>
+  <artifactId>logback-classic</artifactId>
+  <version>1.5.18</version>
+</dependency>
+```
+
+Ejemplo de backend con Log4j2 (app consumidora):
+
+Maven:
+
+```xml
+
+<dependency>
+  <groupId>org.apache.logging.log4j</groupId>
+  <artifactId>log4j-slf4j2-impl</artifactId>
+  <version>2.25.1</version>
+</dependency>
+```
+
+### Migración 5.0.0 ###
+
+- Se elimina `io.github.jcprieto.utilidades.Logger`.
+- La librería solo expone SLF4J; la aplicación debe añadir un backend (Logback/Log4j2) para ver logs.
+
+Configuración mínima Logback (app consumidora), archivo `src/main/resources/logback.xml`:
+
+```xml
+
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+  </root>
+</configuration>
+```
+
+Configuración mínima Log4j2 (app consumidora), archivo `src/main/resources/log4j2.xml`:
+
+```xml
+
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Console"/>
+    </Root>
+  </Loggers>
+</Configuration>
+```
+
+`getPremio`: en caso de error o datos no disponibles, devuelve un `Premio` con `cantidad=0`.
 
 Errores y estados:
 
@@ -44,48 +112,51 @@ Errores y estados:
 Maven:
 
 ```xml
-
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-  <version>4.0.0</version>
+  <version>5.0.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:4.0.0"
+implementation "io.github.jcprieto:loteria-navidad:5.0.0"
 ```
 
 ### Changelog ###
 
+* 5.0.0
+
+  * Cambio de logging a SLF4J (rompe compatibilidad)
+
 * 4.0.0
 
   * Integración de OpenFeign + OkHttp en la conexión HTTP
-  * Scrapper de la web de Loterías y Apuestas del Estado
+  * Scraper de la web de Loterías y Apuestas del Estado
   * Actualización a Java 21
 
 * 3.3.7
 
-  * Correciones de seguridad y estabilidad
+  * Correcciones de seguridad y estabilidad
 
 * 3.3.6
 
-  * Correciones de seguridad y estabilidad
+  * Correcciones de seguridad y estabilidad
 
 * 3.3.5
 
-  * Correciones de seguridad y estabilidad
+  * Correcciones de seguridad y estabilidad
 
 * 3.3.4
 
-  * Correciones de seguridad y estabilidad
+  * Correcciones de seguridad y estabilidad
 
 * 3.3.3
 
-  * Correciones de seguridad y estabilidad
+  * Correcciones de seguridad y estabilidad
 
 * 3.3.2
 
-  * Actualización de seguridad de despendencias.
+  * Actualización de seguridad de dependencias.

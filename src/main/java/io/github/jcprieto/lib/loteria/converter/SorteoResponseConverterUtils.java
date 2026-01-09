@@ -2,7 +2,8 @@ package io.github.jcprieto.lib.loteria.converter;
 
 import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
-import io.github.jcprieto.utilidades.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import java.util.function.Consumer;
 
 public final class SorteoResponseConverterUtils {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SorteoResponseConverterUtils.class);
     private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
 
     private SorteoResponseConverterUtils() {
@@ -86,10 +88,10 @@ public final class SorteoResponseConverterUtils {
                     dateSetter.accept(date);
                 }
             } catch (ParseException e) {
-                Logger.error("Formato de fecha no valido: " + fechaSorteo, e);
+                LOG.error("Formato de fecha no valido: {}", fechaSorteo, e);
             }
         } catch (RuntimeException e) {
-            Logger.error("Error al parsear fecha: " + fechaSorteo, e);
+            LOG.error("Error al parsear fecha: {}", fechaSorteo, e);
         }
     }
 
