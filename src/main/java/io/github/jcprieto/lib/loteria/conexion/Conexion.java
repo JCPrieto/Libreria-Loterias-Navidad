@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -254,9 +255,21 @@ public class Conexion {
     }
 
     private void warmUpLoterias() {
-        if (loteriasWarmup.getAndSet(true)) {
+        if (loteriasWarmup.get()) {
             return;
         }
+        synchronized (loteriasWarmup) {
+            if (loteriasWarmup.get()) {
+                return;
+            }
+            if (!attemptWarmup()) {
+                return;
+            }
+            loteriasWarmup.set(true);
+        }
+    }
+
+    private boolean attemptWarmup() {
         Request request = new Request.Builder()
                 .url(BASE_URL_SORTEOS + "/")
                 .header("User-Agent", LOTERIAS_USER_AGENT)
@@ -265,10 +278,10 @@ public class Conexion {
                 .header("Referer", "https://www.loteriasyapuestas.es/")
                 .header("Cache-Control", "no-cache")
                 .build();
-        try (okhttp3.Response ignored = rawClient.newCall(request).execute()) {
-            // Best-effort to obtain cookies from the origin before API call.
+        try (okhttp3.Response response = rawClient.newCall(request).execute()) {
+            return response.isSuccessful();
         } catch (IOException ignored) {
-            // Ignore warmup failures; the API call may still succeed.
+            return false;
         }
     }
 
@@ -276,7 +289,10 @@ public class Conexion {
         if (response == null || response.body() == null) {
             return null;
         }
-        String raw = new String(response.body().asInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        String raw;
+        try (var stream = response.body().asInputStream()) {
+            raw = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        }
         String trimmed = raw.trim();
         if (trimmed.isEmpty()) {
             return null;
@@ -390,8 +406,11 @@ public class Conexion {
             if (response.body() == null) {
                 return null;
             }
-            byte[] bytes = response.body().asInputStream().readAllBytes();
-            String raw = new String(bytes, StandardCharsets.UTF_8);
+            String raw;
+            try (var stream = response.body().asInputStream()) {
+                byte[] bytes = stream.readAllBytes();
+                raw = new String(bytes, StandardCharsets.UTF_8);
+            }
             int prefixIndex = raw.indexOf('=');
             String json = prefixIndex >= 0 ? raw.substring(prefixIndex + 1) : raw;
             return MAPPER.readValue(json, MAPPER.constructType(type));
@@ -399,7 +418,7 @@ public class Conexion {
     }
 
     private static class InMemoryCookieJar implements CookieJar {
-        private final Map<String, List<Cookie>> store = new HashMap<>();
+        private final Map<String, List<Cookie>> store = new ConcurrentHashMap<>();
 
         @Override
         public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {

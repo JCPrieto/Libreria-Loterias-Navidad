@@ -197,6 +197,30 @@ public class ConexionTest {
         Assert.assertEquals(3, server.getRequestCount());
     }
 
+    @Test
+    public void testWarmupFallaReintentaEnSiguienteLlamada() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(500));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(resumenNavidadJson()));
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(resumenNavidadJson()));
+
+        Conexion conexion = createConexion();
+        ResumenNavidad first = conexion.getResumenNavidad();
+        ResumenNavidad second = conexion.getResumenNavidad();
+
+        Assert.assertNotNull(first);
+        Assert.assertNotNull(second);
+        Assert.assertEquals("/", server.takeRequest().getPath());
+        Assert.assertTrue(server.takeRequest().getPath().startsWith("/servicios/buscadorSorteos"));
+        Assert.assertEquals("/", server.takeRequest().getPath());
+        Assert.assertTrue(server.takeRequest().getPath().startsWith("/servicios/buscadorSorteos"));
+        Assert.assertEquals(4, server.getRequestCount());
+    }
+
     @Test(expected = PremioDecimoNoDisponibleException.class)
     public void testPremioDecimoNoDisponible() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200));

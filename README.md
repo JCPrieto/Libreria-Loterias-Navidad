@@ -115,17 +115,23 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:5.0.0"
+implementation "io.github.jcprieto:loteria-navidad:5.0.1"
 ```
 
 ### Changelog ###
+
+* 5.0.1
+
+  * Mejora el warm-up para reintentos tras fallo
+  * Cierre correcto de recursos HTTP
+  * Cookie jar seguro en concurrencia
 
 * 5.0.0
 
