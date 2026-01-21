@@ -9,19 +9,22 @@ import java.util.ArrayList;
 
 public class ResumenNinoConverter {
 
+    private static final int PREMIO_NO_DISPONIBLE = -1;
+    private static final String EXTRACCION_NO_DISPONIBLE = "-1";
+
     private ResumenNinoConverter() {
 
     }
 
     public static ResumenNino get(Premios premios) {
         ResumenNino resumen = new ResumenNino();
-        if (premios.getPremio1() > -1) {
+        if (premios.getPremio1() > PREMIO_NO_DISPONIBLE) {
             resumen.setPrimero(String.format("%05d", premios.getPremio1()));
         }
-        if (premios.getPremio2() > -1) {
+        if (premios.getPremio2() > PREMIO_NO_DISPONIBLE) {
             resumen.setSegundo(String.format("%05d", premios.getPremio2()));
         }
-        if (premios.getPremio3() > -1) {
+        if (premios.getPremio3() > PREMIO_NO_DISPONIBLE) {
             resumen.setTercero(String.format("%05d", premios.getPremio3()));
         }
         resumen.setCuatroCifras(filterExtracciones(premios.getExtracciones4cifras()));
@@ -86,7 +89,7 @@ public class ResumenNinoConverter {
             return resultado;
         }
         for (String extraccion : extracciones) {
-            if (!"-1".equals(extraccion)) {
+            if (!EXTRACCION_NO_DISPONIBLE.equals(extraccion)) {
                 resultado.add(extraccion);
             }
         }

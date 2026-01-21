@@ -157,15 +157,6 @@ public class Conexion {
         return trimmed.contains("=") ? trimmed : "cms=" + trimmed;
     }
 
-    private static boolean isNumeric(String value) {
-        for (int i = 0; i < value.length(); i++) {
-            if (!Character.isDigit(value.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private static String summarizeBody(String body) {
         String normalized = body == null ? "" : body.replace('\n', ' ').replace('\r', ' ').trim();
         if (normalized.length() <= 200) {
@@ -336,18 +327,7 @@ public class Conexion {
     }
 
     private String normalizeDecimo(String numero) {
-        if (numero == null) {
-            return null;
-        }
-        String trimmed = numero.trim();
-        if (trimmed.isEmpty()) {
-            return null;
-        }
-        if (!isNumeric(trimmed)) {
-            return null;
-        }
-        String normalized = trimmed.length() > 5 ? trimmed.substring(trimmed.length() - 5) : trimmed;
-        return SorteoResponseConverterUtils.formatDecimo(normalized);
+        return SorteoResponseConverterUtils.normalizeDecimo(numero, true);
     }
 
     /**

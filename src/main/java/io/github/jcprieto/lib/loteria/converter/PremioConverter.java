@@ -12,6 +12,7 @@ import java.util.Calendar;
 public class PremioConverter {
 
     private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
+    private static final int PREMIO_DIVISOR = 20;
 
     private PremioConverter() {
 
@@ -19,7 +20,7 @@ public class PremioConverter {
 
     public static Premio get(Busqueda busqueda) {
         Premio premio = new Premio();
-        setCantidad(premio, busqueda.getPremio(), 20);
+        setCantidad(premio, busqueda.getPremio(), PREMIO_DIVISOR);
         setFechaActualizacionFromTimestamp(busqueda.getTimestamp(), premio);
         premio.setEstado(EstadoSorteo.get(busqueda.getStatus()));
         return premio;

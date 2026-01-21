@@ -20,12 +20,23 @@ public class SorteoResponseConverterUtilsTest {
         premios.add(premio("   "));
         premios.add(premio(null));
         premios.add(premio("123"));
+        premios.add(premio("12A45"));
 
         List<String> sinRelleno = SorteoResponseConverterUtils.extractDecimos(premios, false);
         List<String> conRelleno = SorteoResponseConverterUtils.extractDecimos(premios, true);
 
         Assert.assertEquals(List.of("123"), sinRelleno);
         Assert.assertEquals(List.of("00123"), conRelleno);
+    }
+
+    @Test
+    public void testNormalizeDecimoRecortaYPaddea() {
+        Assert.assertEquals("12345", SorteoResponseConverterUtils.normalizeDecimo("12345", true));
+        Assert.assertEquals("01234", SorteoResponseConverterUtils.normalizeDecimo("1234", true));
+        Assert.assertEquals("23456", SorteoResponseConverterUtils.normalizeDecimo("00123456", true));
+        Assert.assertEquals("23456", SorteoResponseConverterUtils.normalizeDecimo("00123456", false));
+        Assert.assertNull(SorteoResponseConverterUtils.normalizeDecimo("12A45", true));
+        Assert.assertNull(SorteoResponseConverterUtils.normalizeDecimo("   ", true));
     }
 
     @Test

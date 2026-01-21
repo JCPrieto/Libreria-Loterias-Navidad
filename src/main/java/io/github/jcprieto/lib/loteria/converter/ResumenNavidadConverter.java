@@ -9,24 +9,26 @@ import java.util.ArrayList;
 
 public class ResumenNavidadConverter {
 
+    private static final int NUMERO_NO_DISPONIBLE = -1;
+
     private ResumenNavidadConverter() {
     }
 
     public static ResumenNavidad get(Premios premios) {
         ResumenNavidad resumen = new ResumenNavidad();
-        if (premios.getNumero1() > -1) {
+        if (premios.getNumero1() > NUMERO_NO_DISPONIBLE) {
             resumen.setGordo(String.format("%05d", premios.getNumero1()));
         }
-        if (premios.getNumero2() > -1) {
+        if (premios.getNumero2() > NUMERO_NO_DISPONIBLE) {
             resumen.setSegundo(String.format("%05d", premios.getNumero2()));
         }
-        if (premios.getNumero3() > -1) {
+        if (premios.getNumero3() > NUMERO_NO_DISPONIBLE) {
             resumen.setTercero(String.format("%05d", premios.getNumero3()));
         }
         resumen.setCuarto(new ArrayList<>());
-        if (premios.getNumero4() > -1) {
+        if (premios.getNumero4() > NUMERO_NO_DISPONIBLE) {
             resumen.getCuarto().add(String.format("%05d", premios.getNumero4()));
-            if (premios.getNumero5() > -1) {
+            if (premios.getNumero5() > NUMERO_NO_DISPONIBLE) {
                 resumen.getCuarto().add(String.format("%05d", premios.getNumero5()));
             }
         }
@@ -88,7 +90,7 @@ public class ResumenNavidadConverter {
                 premios.getNumero13()
         };
         for (int numero : numeros) {
-            if (numero > -1) {
+            if (numero > NUMERO_NO_DISPONIBLE) {
                 resumen.getQuinto().add(String.format("%05d", numero));
             } else {
                 break;

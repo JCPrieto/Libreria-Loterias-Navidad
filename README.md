@@ -115,17 +115,22 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-  <version>5.0.1</version>
+  <version>5.0.2</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:5.0.1"
+implementation "io.github.jcprieto:loteria-navidad:5.0.2"
 ```
 
 ### Changelog ###
+
+* 5.0.2
+
+  * Normalizacion y validacion unificadas para decimos
+  * Constantes de negocio para sentinels y divisor de premios
 
 * 5.0.1
 

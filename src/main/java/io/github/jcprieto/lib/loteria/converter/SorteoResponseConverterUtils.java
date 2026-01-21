@@ -17,6 +17,7 @@ public final class SorteoResponseConverterUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(SorteoResponseConverterUtils.class);
     private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
+    private static final int DECIMO_LENGTH = 5;
 
     private SorteoResponseConverterUtils() {
     }
@@ -35,14 +36,24 @@ public final class SorteoResponseConverterUtils {
     }
 
     public static String formatDecimo(String decimo) {
+        return normalizeDecimo(decimo, true);
+    }
+
+    public static String normalizeDecimo(String decimo, boolean padToFive) {
         if (decimo == null || decimo.isEmpty()) {
             return null;
         }
-        if (decimo.length() >= 5) {
-            return decimo;
+        String trimmed = decimo.trim();
+        if (trimmed.isEmpty() || !isNumeric(trimmed)) {
+            return null;
         }
-        return "0".repeat(5 - decimo.length()) +
-                decimo;
+        String normalized = trimmed.length() > DECIMO_LENGTH
+                ? trimmed.substring(trimmed.length() - DECIMO_LENGTH)
+                : trimmed;
+        if (!padToFive || normalized.length() >= DECIMO_LENGTH) {
+            return normalized;
+        }
+        return "0".repeat(DECIMO_LENGTH - normalized.length()) + normalized;
     }
 
     public static Optional<SorteoNavidadResponse.PremioDetalle> getFirst(
@@ -62,11 +73,7 @@ public final class SorteoResponseConverterUtils {
             if (premio == null || premio.getDecimo() == null) {
                 continue;
             }
-            String rawDecimo = premio.getDecimo().trim();
-            if (rawDecimo.isEmpty()) {
-                continue;
-            }
-            String decimo = padToFive ? formatDecimo(rawDecimo) : rawDecimo;
+            String decimo = normalizeDecimo(premio.getDecimo(), padToFive);
             if (decimo != null && !decimo.isEmpty()) {
                 resultado.add(decimo);
             }
@@ -104,5 +111,14 @@ public final class SorteoResponseConverterUtils {
             date.setTimeInMillis(timestamp * 1000L);
             dateSetter.accept(date.getTime());
         }
+    }
+
+    private static boolean isNumeric(String value) {
+        for (int i = 0; i < value.length(); i++) {
+            if (!Character.isDigit(value.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
