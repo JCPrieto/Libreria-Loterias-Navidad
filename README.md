@@ -119,17 +119,25 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-  <version>5.0.2</version>
+  <version>6.0.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:5.0.2"
+implementation "io.github.jcprieto:loteria-navidad:6.0.0"
 ```
 
 ### Changelog ###
+
+* 6.0.0
+
+  * Cambio rompedor: `Premio#getCantidad()` y `Premio#setCantidad(...)` pasan de `double` a `BigDecimal`
+  * Precision decimal en conversion de importes no exactos (escala 8 y normalizacion de ceros)
+  * Soporte documentado y probado para decimos con mas de 5 digitos (usa los ultimos 5)
+  * Nueva prueba de concurrencia para `InMemoryCookieJar`
+  * Actualizacion de `maven-compiler-plugin` a `3.15.0`
 
 * 5.0.2
 

@@ -2,9 +2,9 @@
 
 ## Project Structure & Module Organization
 
-- `src/main/java/es/jklabs/lib/loteria/` contains the library code (API connection, models, converters, enums).
-- `src/test/java/es/jklabs/` contains JUnit 4 tests.
-- `pom.xml` defines Maven build config, Java 11 toolchain, and dependencies.
+- `src/main/java/io/github/jcprieto/lib/loteria/` contains the library code (API connection, models, converters, enums).
+- `src/test/java/io/github/jcprieto/` contains JUnit 4 tests.
+- `pom.xml` defines Maven build config, Java 21 toolchain, and dependencies.
 - `target/` is Maven build output (generated).
 
 ## Build, Test, and Development Commands
@@ -17,13 +17,14 @@
 
 - Use standard Java conventions: 4-space indentation, `UpperCamelCase` for classes, `lowerCamelCase` for methods and
   variables.
-- Keep package names lower-case and aligned to `es.jklabs.lib.loteria`.
+- Keep package names lower-case and aligned to `io.github.jcprieto.lib.loteria`.
 - No formatter or linter is configured; keep changes minimal and consistent with existing files.
 
 ## Testing Guidelines
 
 - Tests use JUnit 4 (`org.junit.Test`, `Assert`).
-- Network-dependent tests (like `ApiTest`) hit the external API; expect potential flakiness when offline.
+- Network-dependent tests (like `ConexionTest`) may hit external endpoints in some scenarios; expect potential flakiness
+  when offline.
 - Name tests with `*Test` suffix and place them under `src/test/java`.
 
 ## Commit & Pull Request Guidelines
