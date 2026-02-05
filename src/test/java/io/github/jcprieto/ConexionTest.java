@@ -162,6 +162,24 @@ public class ConexionTest {
     }
 
     @Test
+    public void testPremioConDecimoMayorA5DigitosUsaUltimos5() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJson()));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "0012345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(new BigDecimal("50"), premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
+    }
+
+    @Test
     public void testPremioConDecimoVacioDevuelveCantidadCero() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
