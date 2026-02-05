@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Month;
@@ -167,7 +168,7 @@ public class Conexion {
 
     private static Premio emptyPremio() {
         Premio premio = new Premio();
-        premio.setCantidad(0D);
+        premio.setCantidad(BigDecimal.ZERO);
         premio.setEstado(EstadoSorteo.NO_INICIADO);
         return premio;
     }

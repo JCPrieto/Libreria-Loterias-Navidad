@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -137,7 +138,7 @@ public class ConexionTest {
         RecordedRequest premioRequest = server.takeRequest();
         Assert.assertEquals("/servicios/premioDecimoWeb?idsorteo=1295909102", premioRequest.getPath());
         Assert.assertNotNull(premio);
-        Assert.assertEquals(50.0, premio.getCantidad(), 0.001);
+        Assert.assertEquals(new BigDecimal("50"), premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
         Assert.assertNotNull(premio.getFechaActualizacion());
     }
@@ -156,7 +157,7 @@ public class ConexionTest {
         Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12A45");
 
         Assert.assertNotNull(premio);
-        Assert.assertEquals(0D, premio.getCantidad(), 0.001);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
     }
 
@@ -174,7 +175,7 @@ public class ConexionTest {
         Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "   ");
 
         Assert.assertNotNull(premio);
-        Assert.assertEquals(0D, premio.getCantidad(), 0.001);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
     }
 
@@ -285,7 +286,7 @@ public class ConexionTest {
         Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 
         Assert.assertNotNull(premio);
-        Assert.assertEquals(0D, premio.getCantidad(), 0.001);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
     }
 

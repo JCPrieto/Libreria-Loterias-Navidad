@@ -102,6 +102,10 @@ Configuración mínima Log4j2 (app consumidora), archivo `src/main/resources/log
 
 `getPremio`: en caso de error o datos no disponibles, devuelve un `Premio` con `cantidad=0`.
 
+Precision en importes:
+
+- `Premio#getCantidad()` devuelve el importe como `BigDecimal`.
+
 Errores y estados:
 
 - `getResumenNavidad` y `getResumenNino` devuelven `null` si no hay datos o hay error de red.

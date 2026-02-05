@@ -4,6 +4,8 @@ import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.model.Premio;
 import io.github.jcprieto.lib.loteria.model.json.Busqueda;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,6 +15,7 @@ public class PremioConverter {
 
     private static final ZoneId MADRID_ZONE = ZoneId.of("Europe/Madrid");
     private static final int PREMIO_DIVISOR = 20;
+    private static final int AMOUNT_SCALE = 8;
 
     private PremioConverter() {
 
@@ -38,11 +41,13 @@ public class PremioConverter {
         premio.setCantidad(calculateCantidad(cantidad, divisor));
     }
 
-    private static double calculateCantidad(long cantidad, int divisor) {
+    private static BigDecimal calculateCantidad(long cantidad, int divisor) {
         if (cantidad != 0 && divisor > 0) {
-            return cantidad / (double) divisor;
+            return BigDecimal.valueOf(cantidad)
+                    .divide(BigDecimal.valueOf(divisor), AMOUNT_SCALE, RoundingMode.HALF_UP)
+                    .stripTrailingZeros();
         }
-        return 0D;
+        return BigDecimal.ZERO;
     }
 
     private static void setFechaActualizacionFromTimestamp(long timestamp, Premio premio) {
