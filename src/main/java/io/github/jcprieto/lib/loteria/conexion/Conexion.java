@@ -31,10 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -57,7 +54,7 @@ public class Conexion {
     private final String cmsCookie;
     private final okhttp3.OkHttpClient rawClient;
     private final AtomicBoolean loteriasWarmup = new AtomicBoolean(false);
-    private final Map<Sorteo, PremioDecimoCache> premioCache = new HashMap<>();
+    private final EnumMap<Sorteo, PremioDecimoCache> premioCache = new EnumMap<>(Sorteo.class);
 
     public Conexion() {
         this(DEFAULT_CONNECT_TIMEOUT_MS, DEFAULT_READ_TIMEOUT_MS, DEFAULT_RETRYER);
