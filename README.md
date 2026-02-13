@@ -1,5 +1,7 @@
 # Libreria-Loterias-Navidad
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JCPrieto_Libreria-Loterias-Navidad&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JCPrieto_Libreria-Loterias-Navidad)
+
 Librería de conexión con la API de Loterías y Apuestas del Estado para obtener los resultados de las Loterías de Navidad
 y de El Niño.
 

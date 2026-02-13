@@ -25,10 +25,8 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-      - name: Run tests
-        run: mvn -B test
-      - name: Package
-        run: mvn -B package -DskipTests
+      - name: Build package
+        run: mvn -B package
       - name: Read version
         id: version
         run: echo "value=$(mvn -q -DforceStdout help:evaluate -Dexpression=project.version)" >> "$GITHUB_OUTPUT"
