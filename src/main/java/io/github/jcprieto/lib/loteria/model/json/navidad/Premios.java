@@ -23,10 +23,6 @@ public class Premios {
     private String urlAudio;
     private int error;
 
-    public Premios() {
-
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
