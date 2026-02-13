@@ -121,14 +121,14 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-    <version>6.0.1</version>
+  <version>6.0.2</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:6.0.1"
+implementation "io.github.jcprieto:loteria-navidad:6.0.2"
 ```
 
 ### Changelog ###

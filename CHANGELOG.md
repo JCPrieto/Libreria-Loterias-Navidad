@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.2
+
+- Ajuste de proceso de release: la firma GPG (`maven-gpg-plugin`) se mueve a un perfil manual `release-sign`
+- `verify` deja de requerir clave privada GPG por defecto, evitando fallos en CI/SonarQube
+- Sin cambios en API publica ni en comportamiento funcional de la libreria
+
 ## 6.0.1
 
 - Mantenimiento interno en `Conexion`: `premioCache` pasa de `HashMap` a `EnumMap` para uso mas eficiente con `Sorteo`

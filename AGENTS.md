@@ -14,6 +14,7 @@
 - `mvn package` compiles and packages the library JAR.
 - `mvn verify -Pcoverage` runs tests and generates JaCoCo XML coverage (`target/site/jacoco/jacoco.xml`) for SonarQube
   analysis.
+- `mvn -Prelease-sign deploy` signs artifacts with GPG and publishes to Maven Central (manual/local release flow).
 
 ## Coding Style & Naming Conventions
 
@@ -43,3 +44,4 @@
 - Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
 - Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping `CHANGELOG.md` consistent with
   releases.
+- GPG signing is intentionally isolated in the `release-sign` profile to avoid requiring private keys in CI.
