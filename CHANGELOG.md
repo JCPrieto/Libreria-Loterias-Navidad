@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.3
+
+- Corregido el fallo de CI/SonarQube con Java 21 al actualizar JaCoCo de `0.8.7` a `0.8.13`
+- Se mantiene la firma GPG solo para el flujo manual con perfil `release-sign`
+- Sin cambios en API publica ni en comportamiento funcional de la libreria
+
 ## 6.0.2
 
 - Ajuste de proceso de release: la firma GPG (`maven-gpg-plugin`) se mueve a un perfil manual `release-sign`
