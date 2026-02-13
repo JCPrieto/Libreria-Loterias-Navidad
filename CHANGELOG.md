@@ -1,0 +1,61 @@
+# Changelog
+
+## 6.0.1
+
+- Mantenimiento interno en `Conexion`: `premioCache` pasa de `HashMap` a `EnumMap` para uso mas eficiente con `Sorteo`
+- Limpieza de modelos JSON internos: eliminada la clase `Info` no usada y constructor vacio redundante en `Premios`
+- Integracion de SonarQube en CI con perfil Maven `coverage` (JaCoCo XML) y badge de estado de calidad en README
+- Actualizacion de OpenFeign de `13.6` a `13.8`
+
+## 6.0.0
+
+- Cambio rompedor: `Premio#getCantidad()` y `Premio#setCantidad(...)` pasan de `double` a `BigDecimal`
+- Precision decimal en conversion de importes no exactos (escala 8 y normalizacion de ceros)
+- Soporte documentado y probado para decimos con mas de 5 digitos (usa los ultimos 5)
+- Nueva prueba de concurrencia para `InMemoryCookieJar`
+- Actualizacion de `maven-compiler-plugin` a `3.15.0`
+
+## 5.0.2
+
+- Normalizacion y validacion unificadas para decimos
+- Constantes de negocio para sentinels y divisor de premios
+
+## 5.0.1
+
+- Mejora el warm-up para reintentos tras fallo
+- Cierre correcto de recursos HTTP
+- Cookie jar seguro en concurrencia
+
+## 5.0.0
+
+- Cambio de logging a SLF4J (rompe compatibilidad)
+
+## 4.0.0
+
+- Integración de OpenFeign + OkHttp en la conexión HTTP
+- Scraper de la web de Loterías y Apuestas del Estado
+- Actualización a Java 21
+
+## 3.3.7
+
+- Correcciones de seguridad y estabilidad
+
+## 3.3.6
+
+- Correcciones de seguridad y estabilidad
+
+## 3.3.5
+
+- Correcciones de seguridad y estabilidad
+
+## 3.3.4
+
+- Correcciones de seguridad y estabilidad
+
+## 3.3.3
+
+- Correcciones de seguridad y estabilidad
+
+## 3.3.2
+
+- Actualización de seguridad de dependencias.

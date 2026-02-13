@@ -12,6 +12,8 @@
 - `mvn clean` removes generated build artifacts under `target/`.
 - `mvn test` runs JUnit 4 tests in `src/test/java`.
 - `mvn package` compiles and packages the library JAR.
+- `mvn verify -Pcoverage` runs tests and generates JaCoCo XML coverage (`target/site/jacoco/jacoco.xml`) for SonarQube
+  analysis.
 
 ## Coding Style & Naming Conventions
 
@@ -25,6 +27,7 @@
 - Tests use JUnit 4 (`org.junit.Test`, `Assert`).
 - Network-dependent tests (like `ConexionTest`) may hit external endpoints in some scenarios; expect potential flakiness
   when offline.
+- GitHub Actions runs `CI` on pull requests to `master` and a dedicated `SonarQube` workflow on pushes to `master`.
 - Name tests with `*Test` suffix and place them under `src/test/java`.
 
 ## Commit & Pull Request Guidelines
@@ -38,5 +41,5 @@
 ## Configuration & Compatibility Notes
 
 - Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
-- Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping the changelog in `README.md`
-  consistent with releases.
+- Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping `CHANGELOG.md` consistent with
+  releases.
