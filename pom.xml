@@ -88,25 +88,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.2.8</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <gpgExecutable>gpg</gpgExecutable>
-                    <keyname>558442263B6AC29B9FF4AEB5F320065B4D152C59</keyname>
-                    <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <properties>
@@ -179,6 +160,32 @@
     </reporting>
 
     <profiles>
+        <profile>
+            <id>release-sign</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.8</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <gpgExecutable>gpg</gpgExecutable>
+                            <keyname>558442263B6AC29B9FF4AEB5F320065B4D152C59</keyname>
+                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>coverage</id>
             <build>
