@@ -124,7 +124,7 @@ public class Conexion {
             template.header("Cache-Control", "no-cache");
             template.header("Accept-Language", "es-ES,es;q=0.9");
             template.header("Referer", "https://www.loteriasyapuestas.es/");
-            template.header("Origin", "https://www.loteriasyapuestas.es");
+            template.header("Origin", BASE_URL_SORTEOS);
             String cookie = getCmsCookieHeader();
             if (cookie != null) {
                 template.header("Cookie", cookie);
