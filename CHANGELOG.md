@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.4
+
+- Hotfix de seguridad en CI: la acción de release de GitHub (`softprops/action-gh-release`) queda fijada a SHA completo
+- Actualización de mantenimiento en cobertura: `jacoco-maven-plugin` de `0.8.13` a `0.8.14`
+- Ampliación de tests unitarios de `Conexion` para cookies CMS y rutas de borde/error en consulta de premios
+- Ajuste interno menor en `Conexion` para reutilizar la constante `BASE_URL_SORTEOS` en la cabecera `Origin`
+- Sin cambios en API publica ni en comportamiento funcional de la libreria
+
 ## 6.0.3
 
 - Corregido el fallo de CI/SonarQube con Java 21 al actualizar JaCoCo de `0.8.7` a `0.8.13`

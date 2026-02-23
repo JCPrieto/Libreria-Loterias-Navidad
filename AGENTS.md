@@ -45,3 +45,5 @@
 - Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping `CHANGELOG.md` consistent with
   releases.
 - GPG signing is intentionally isolated in the `release-sign` profile to avoid requiring private keys in CI.
+- In GitHub Actions workflows, prefer pinning third-party actions to full commit SHA (instead of mutable tags) to
+  satisfy security checks like SonarQube hotspots.
