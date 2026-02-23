@@ -17,10 +17,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class ConexionTest {
 
@@ -308,11 +311,161 @@ public class ConexionTest {
         Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
     }
 
+    @Test
+    public void testResumenNavidadIncluyeCookieCmsNormalizada() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(resumenNavidadJson()));
+
+        Conexion conexion = createConexionWithCmsCookie("  valorCookie  ");
+        conexion.getResumenNavidad();
+
+        server.takeRequest();
+        RecordedRequest request = server.takeRequest();
+        Assert.assertEquals("cms=valorCookie", request.getHeader("Cookie"));
+    }
+
+    @Test
+    public void testResumenNavidadMantieneCookieCmsYaFormada() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(resumenNavidadJson()));
+
+        Conexion conexion = createConexionWithCmsCookie("cms=valorCookie");
+        conexion.getResumenNavidad();
+
+        server.takeRequest();
+        RecordedRequest request = server.takeRequest();
+        Assert.assertEquals("cms=valorCookie", request.getHeader("Cookie"));
+    }
+
+    @Test
+    public void testGetPremioSinIdSorteoDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[{\"fecha_sorteo\":\"2025-12-22 08:30:00\",\"estado\":\"cerrado\"}]"));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+        Assert.assertEquals(2, server.getRequestCount());
+    }
+
+    @Test
+    public void testGetPremioConImportePorDefectoInvalidoDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("{\"importePorDefecto\":0,\"compruebe\":[{\"decimo\":\"012345\",\"prize\":100000}]}"));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+    }
+
+    @Test
+    public void testGetPremioConRespuestaVaciaDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("   "));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+    }
+
+    @Test(expected = IOException.class)
+    public void testGetPremioConRespuestaInvalidaLanzaIOException() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("{invalid-json"));
+
+        Conexion conexion = createConexion();
+        conexion.getPremio(Sorteo.NAVIDAD, "12345");
+    }
+
+    @Test
+    public void testPremioNinoUsaFechaSeisEnero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(premioDecimoJson()));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NINO, "12345");
+
+        server.takeRequest();
+        RecordedRequest request = server.takeRequest();
+        String fecha = getUltimoSeisEnero();
+        Assert.assertEquals("/servicios/buscadorSorteosConEscrutinio?fechaInicioInclusiva=" + fecha
+                + "&fechaFinInclusiva=" + fecha
+                + "&game_id=LNAC&limiteMaxResultados=1", request.getPath());
+        Assert.assertEquals(new BigDecimal("50"), premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
+    }
+
+    @Test
+    public void testGetCmsCookieHeaderDesdeCookieJar() throws Exception {
+        Conexion conexion = new Conexion();
+        Field cookieJarField = Conexion.class.getDeclaredField("cookieJar");
+        cookieJarField.setAccessible(true);
+        CookieJar cookieJar = (CookieJar) cookieJarField.get(conexion);
+        Assert.assertNotNull(cookieJar);
+
+        HttpUrl url = HttpUrl.parse("https://www.loteriasyapuestas.es/");
+        Assert.assertNotNull(url);
+        Cookie cookie = new Cookie.Builder()
+                .name("cms")
+                .value("valorJar")
+                .domain("www.loteriasyapuestas.es")
+                .path("/")
+                .build();
+        cookieJar.saveFromResponse(url, List.of(cookie));
+
+        Method method = Conexion.class.getDeclaredMethod("getCmsCookieHeader");
+        method.setAccessible(true);
+        String header = (String) method.invoke(conexion);
+        Assert.assertEquals("cms=valorJar", header);
+    }
+
     private Conexion createConexion() {
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(new HostRewriteInterceptor(server.url("/")))
                 .build();
         return new Conexion(client);
+    }
+
+    private Conexion createConexionWithCmsCookie(String cmsCookie) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(new HostRewriteInterceptor(server.url("/")))
+                .build();
+        return new Conexion(client, 5_000, 10_000, null, cmsCookie);
     }
 
     private String resumenNavidadJson() {
@@ -384,12 +537,7 @@ public class ConexionTest {
         return fechaSorteo.format(DateTimeFormatter.BASIC_ISO_DATE);
     }
 
-    private static class HostRewriteInterceptor implements Interceptor {
-        private final HttpUrl baseUrl;
-
-        private HostRewriteInterceptor(HttpUrl baseUrl) {
-            this.baseUrl = baseUrl;
-        }
+    private record HostRewriteInterceptor(HttpUrl baseUrl) implements Interceptor {
 
         @Override
         public Response intercept(Chain chain) throws IOException {
