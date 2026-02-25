@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.5
+
+- Actualizacion de dependencias: OpenFeign de `13.8` a `13.9` y `jackson-databind` de `2.21.0` a `2.21.1`
+- Limpieza interna en `Conexion`: eliminado metodo privado no usado (`summarizeBody`) y simplificado el parseo de
+  `PremioDecimoResponse`
+- Nuevos tests unitarios para `EstadoSorteo` cubriendo mapeo de estados validos y no soportados
+- Sin cambios en API publica ni en comportamiento funcional de la libreria
+
 ## 6.0.4
 
 - Hotfix de seguridad en CI: la acción de release de GitHub (`softprops/action-gh-release`) queda fijada a SHA completo
