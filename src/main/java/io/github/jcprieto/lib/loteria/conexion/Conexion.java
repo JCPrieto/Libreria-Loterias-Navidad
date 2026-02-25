@@ -155,14 +155,6 @@ public class Conexion {
         return trimmed.contains("=") ? trimmed : "cms=" + trimmed;
     }
 
-    private static String summarizeBody(String body) {
-        String normalized = body == null ? "" : body.replace('\n', ' ').replace('\r', ' ').trim();
-        if (normalized.length() <= 200) {
-            return normalized;
-        }
-        return normalized.substring(0, 200) + "...";
-    }
-
     private static Premio emptyPremio() {
         Premio premio = new Premio();
         premio.setCantidad(BigDecimal.ZERO);
@@ -289,12 +281,7 @@ public class Conexion {
         if ("E019".equals(trimmed) || "\"E019\"".equals(trimmed)) {
             throw new PremioDecimoNoDisponibleException("Premio no disponible para el sorteo solicitado");
         }
-        try {
-            return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
-        } catch (IOException e) {
-            LOG.error("Error al parsear premioDecimo: {}", summarizeBody(trimmed), e);
-            throw e;
-        }
+        return OBJECT_MAPPER.readValue(trimmed, PremioDecimoResponse.class);
     }
 
     private PremioDecimoCache buildPremioCache(String fechaConsulta, SorteoConEscrutinioResponse sorteoResponse,
