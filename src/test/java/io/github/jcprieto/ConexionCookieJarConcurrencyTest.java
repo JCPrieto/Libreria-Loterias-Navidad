@@ -7,9 +7,8 @@ import okhttp3.HttpUrl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -26,13 +25,14 @@ public class ConexionCookieJarConcurrencyTest {
     }
 
     private static CookieJar createInMemoryCookieJar() throws Exception {
-        Class<?> jarClass = Arrays.stream(Conexion.class.getDeclaredClasses())
-                .filter(it -> "InMemoryCookieJar".equals(it.getSimpleName()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("InMemoryCookieJar no encontrado"));
-        Constructor<?> ctor = jarClass.getDeclaredConstructor();
-        ctor.setAccessible(true);
-        return (CookieJar) ctor.newInstance();
+        Conexion conexion = new Conexion();
+        Field cookieJarField = Conexion.class.getDeclaredField("cookieJar");
+        cookieJarField.setAccessible(true);
+        Object jar = cookieJarField.get(conexion);
+        if (!(jar instanceof CookieJar)) {
+            throw new IllegalStateException("InMemoryCookieJar no implementa CookieJar");
+        }
+        return (CookieJar) jar;
     }
 
     private static String getCookieHeader(CookieJar jar) throws Exception {
@@ -45,10 +45,9 @@ public class ConexionCookieJarConcurrencyTest {
     public void testInMemoryCookieJarSoportaAccesoConcurrente() throws Exception {
         CookieJar jar = createInMemoryCookieJar();
         HttpUrl url = Objects.requireNonNull(HttpUrl.parse("https://www.loteriasyapuestas.es/"));
-        ExecutorService pool = Executors.newFixedThreadPool(8);
         CountDownLatch start = new CountDownLatch(1);
 
-        try {
+        try (ExecutorService pool = Executors.newFixedThreadPool(8)) {
             Future<?>[] futures = new Future[100];
             for (int i = 0; i < 100; i++) {
                 final int value = i;
@@ -63,8 +62,6 @@ public class ConexionCookieJarConcurrencyTest {
             for (Future<?> future : futures) {
                 future.get(5, TimeUnit.SECONDS);
             }
-        } finally {
-            pool.shutdownNow();
         }
 
         String cookieHeader = getCookieHeader(jar);
