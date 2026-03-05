@@ -1,5 +1,16 @@
 # Changelog
 
+## 6.0.6
+
+- Actualizacion de dependencia: OpenFeign de `13.9` a `13.9.3` (fix de mantenimiento y seguridad)
+- Refactor interno en `SorteoResponseConverterUtils` para simplificar condiciones redundantes y mejorar el manejo de
+  fecha en fallback legacy
+- Ampliacion de tests unitarios de `SorteoResponseConverterUtils` para cubrir ramas/condiciones reportadas por SonarQube
+- Ajuste en `ConexionCookieJarConcurrencyTest` para evitar reflexion fragil por nombre de clase y validar tipo con
+  `instanceof`
+- Limpieza de modelo interno: eliminado constructor vacio explicito redundante en `Premios`
+- Sin cambios en API publica ni en comportamiento funcional esperado de la libreria
+
 ## 6.0.5
 
 - Actualizacion de dependencias: OpenFeign de `13.8` a `13.9` y `jackson-databind` de `2.21.0` a `2.21.1`
