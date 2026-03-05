@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -61,6 +62,121 @@ public class SorteoResponseConverterUtilsTest {
     public void testExtractDecimosConListaNulaOVacia() {
         Assert.assertTrue(SorteoResponseConverterUtils.extractDecimos(null, false).isEmpty());
         Assert.assertTrue(SorteoResponseConverterUtils.extractDecimos(List.of(), true).isEmpty());
+    }
+
+    @Test
+    public void testExtractDecimosIgnoraElementoNulo() {
+        List<SorteoNavidadResponse.PremioDetalle> premios = Arrays.asList(
+                null,
+                premio("7")
+        );
+        Assert.assertEquals(List.of("00007"), SorteoResponseConverterUtils.extractDecimos(premios, true));
+    }
+
+    @Test
+    public void testGetEstadoMapeaValoresEsperados() {
+        Assert.assertEquals(io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo.EN_PROCESO,
+                SorteoResponseConverterUtils.getEstado("abierto"));
+        Assert.assertEquals(io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo.TERMINADO,
+                SorteoResponseConverterUtils.getEstado(" CERRADO "));
+        Assert.assertEquals(io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo.NO_INICIADO,
+                SorteoResponseConverterUtils.getEstado("Pendiente"));
+        Assert.assertNull(SorteoResponseConverterUtils.getEstado("desconocido"));
+        Assert.assertNull(SorteoResponseConverterUtils.getEstado(null));
+    }
+
+    @Test
+    public void testFormatDecimoDelegadoANormalize() {
+        Assert.assertEquals("00007", SorteoResponseConverterUtils.formatDecimo("7"));
+        Assert.assertNull(SorteoResponseConverterUtils.formatDecimo(null));
+        Assert.assertNull(SorteoResponseConverterUtils.formatDecimo(""));
+    }
+
+    @Test
+    public void testGetFirstConNuloVacioYPrimerElementoNulo() {
+        Assert.assertTrue(SorteoResponseConverterUtils.getFirst(null).isEmpty());
+        Assert.assertTrue(SorteoResponseConverterUtils.getFirst(List.of()).isEmpty());
+        Assert.assertTrue(SorteoResponseConverterUtils.getFirst(Arrays.asList(null, premio("12345"))).isEmpty());
+        Assert.assertEquals("12345",
+                SorteoResponseConverterUtils.getFirst(List.of(premio("12345"))).orElseThrow().getDecimo());
+    }
+
+    @Test
+    public void testSetFechaActualizacionConFechaNulaNoHaceNada() {
+        AtomicReference<LocalDateTime> local = new AtomicReference<>();
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacion(null, local::set, legacy::set);
+
+        Assert.assertNull(local.get());
+        Assert.assertNull(legacy.get());
+    }
+
+    @Test
+    public void testSetFechaActualizacionConFormatoValidoSeteaLocalDateTime() {
+        AtomicReference<LocalDateTime> local = new AtomicReference<>();
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacion("2025-12-22 08:30:00", local::set, legacy::set);
+
+        Assert.assertEquals(LocalDateTime.of(2025, 12, 22, 8, 30, 0), local.get());
+        Assert.assertNull(legacy.get());
+    }
+
+    @Test
+    public void testSetFechaActualizacionConFormatoInvalidoNoSeteaCampos() {
+        AtomicReference<LocalDateTime> local = new AtomicReference<>();
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacion("2025/12/22", local::set, legacy::set);
+
+        Assert.assertNull(local.get());
+        Assert.assertNull(legacy.get());
+    }
+
+    @Test
+    public void testSetFechaActualizacionConFallbackLegacyCuandoFallaLocalDateTime() {
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacion(
+                "2025-12-22 08:30:00",
+                ignored -> {
+                    throw new NoClassDefFoundError("java.time.LocalDateTime");
+                },
+                legacy::set
+        );
+
+        Assert.assertNotNull(legacy.get());
+    }
+
+    @Test
+    public void testSetFechaActualizacionConFallbackLegacyYFormatoInvalido() {
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacion(
+                "22/12/2025",
+                ignored -> {
+                    throw new NoClassDefFoundError("java.time.LocalDateTime");
+                },
+                legacy::set
+        );
+
+        Assert.assertNull(legacy.get());
+    }
+
+    @Test
+    public void testSetFechaActualizacionFromTimestampFallbackLegacyCuandoFallaLocalDateTime() {
+        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
+
+        SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
+                1700000000L,
+                ignored -> {
+                    throw new NoClassDefFoundError("java.time.LocalDateTime");
+                },
+                legacy::set
+        );
+
+        Assert.assertNotNull(legacy.get());
     }
 
     private SorteoNavidadResponse.PremioDetalle premio(String decimo) {

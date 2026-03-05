@@ -74,7 +74,7 @@ public final class SorteoResponseConverterUtils {
                 continue;
             }
             String decimo = normalizeDecimo(premio.getDecimo(), padToFive);
-            if (decimo != null && !decimo.isEmpty()) {
+            if (decimo != null) {
                 resultado.add(decimo);
             }
         }
@@ -91,9 +91,7 @@ public final class SorteoResponseConverterUtils {
         } catch (NoClassDefFoundError n) {
             try {
                 Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).parse(fechaSorteo);
-                if (date != null) {
-                    dateSetter.accept(date);
-                }
+                dateSetter.accept(date);
             } catch (ParseException e) {
                 LOG.error("Formato de fecha no valido: {}", fechaSorteo, e);
             }
