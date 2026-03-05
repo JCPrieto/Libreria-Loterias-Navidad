@@ -15,10 +15,6 @@ public class Premios {
     private String[] extracciones2cifras;
     private String[] reintegros;
 
-    public Premios() {
-
-    }
-
     public long getTimestamp() {
         return timestamp;
     }
