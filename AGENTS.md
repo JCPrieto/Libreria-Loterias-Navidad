@@ -42,8 +42,8 @@
 ## Configuration & Compatibility Notes
 
 - Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
-- Dependencies are managed in `pom.xml`; prefer updating versions via Maven and keeping `CHANGELOG.md` consistent with
-  releases.
+- Dependencies are managed in `pom.xml`; prefer updating versions through existing Maven properties when available
+  (for example `openfeign.version`) and keep `CHANGELOG.md` consistent with releases.
 - GPG signing is intentionally isolated in the `release-sign` profile to avoid requiring private keys in CI.
 - In GitHub Actions workflows, prefer pinning third-party actions to full commit SHA (instead of mutable tags) to
   satisfy security checks like SonarQube hotspots.

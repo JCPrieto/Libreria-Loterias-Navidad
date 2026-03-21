@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.0.7
+
+- Actualizacion de dependencia: OpenFeign de `13.9.3` a `13.11`
+- Correccion interna en `Conexion`: se usa `DefaultRetryer` compatible con la version actual de Feign para mantener la
+  politica de reintentos por defecto
+- Nuevos tests unitarios en `Premio` para validar normalizacion de `BigDecimal` con valores nulos, ceros, escalas y
+  escala negativa
+- Sin cambios en API publica ni en el contrato funcional esperado de la libreria
+
 ## 6.0.6
 
 - Actualizacion de dependencia: OpenFeign de `13.9` a `13.9.3` (fix de mantenimiento y seguridad)
