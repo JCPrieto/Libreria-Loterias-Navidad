@@ -45,7 +45,7 @@ public class Conexion {
     private static final String BASE_URL_SORTEOS = "https://www.loteriasyapuestas.es";
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 10_000;
-    private static final Retryer DEFAULT_RETRYER = new Retryer.Default(200, TimeUnit.SECONDS.toMillis(1), 2);
+    private static final Retryer DEFAULT_RETRYER = new DefaultRetryer(200, TimeUnit.SECONDS.toMillis(1), 2);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.BASIC_ISO_DATE;
     private static final String LOTERIAS_USER_AGENT = "PostmanRuntime/7.51.0";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
