@@ -358,6 +358,38 @@ public class ConexionTest {
     }
 
     @Test
+    public void testGetPremioSinSorteosDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[]"));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+        Assert.assertEquals(2, server.getRequestCount());
+    }
+
+    @Test
+    public void testGetPremioConIdSorteoVacioDevuelveCantidadCero() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("[{\"fecha_sorteo\":\"2025-12-22 08:30:00\",\"estado\":\"cerrado\",\"id_sorteo\":\"   \"}]"));
+
+        Conexion conexion = createConexion();
+        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
+
+        Assert.assertNotNull(premio);
+        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+        Assert.assertEquals(2, server.getRequestCount());
+    }
+
+    @Test
     public void testGetPremioConImportePorDefectoInvalidoDevuelveCantidadCero() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
@@ -402,6 +434,20 @@ public class ConexionTest {
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setBody("{invalid-json"));
+
+        Conexion conexion = createConexion();
+        conexion.getPremio(Sorteo.NAVIDAD, "12345");
+    }
+
+    @Test(expected = PremioDecimoNoDisponibleException.class)
+    public void testPremioDecimoNoDisponibleEntreComillas() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(200));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody(sorteoConEscrutinioJson()));
+        server.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .setBody("\"E019\""));
 
         Conexion conexion = createConexion();
         conexion.getPremio(Sorteo.NAVIDAD, "12345");
@@ -452,6 +498,40 @@ public class ConexionTest {
         method.setAccessible(true);
         String header = (String) method.invoke(conexion);
         Assert.assertEquals("cms=valorJar", header);
+    }
+
+    @Test
+    public void testGetCmsCookieHeaderConCookieEnBlancoDevuelveNull() throws Exception {
+        Conexion conexion = createConexionWithCmsCookie("   ");
+
+        Method method = Conexion.class.getDeclaredMethod("getCmsCookieHeader");
+        method.setAccessible(true);
+        String header = (String) method.invoke(conexion);
+
+        Assert.assertNull(header);
+    }
+
+    @Test
+    public void testGetCmsCookieHeaderSinCookieJarDevuelveNull() throws Exception {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        return List.of();
+                    }
+                })
+                .build();
+        Conexion conexion = new Conexion(client);
+
+        Method method = Conexion.class.getDeclaredMethod("getCmsCookieHeader");
+        method.setAccessible(true);
+        String header = (String) method.invoke(conexion);
+
+        Assert.assertNull(header);
     }
 
     private Conexion createConexion() {
