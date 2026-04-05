@@ -1,5 +1,13 @@
 # Changelog
 
+## 6.0.8
+
+- Actualizacion de seguridad y mantenimiento: `jackson-databind` de `2.21.1` a `2.21.2`
+- Ampliacion de `ConexionTest` para cubrir ramas de borde en premios y cabeceras CMS (`[]`, `id_sorteo` en blanco,
+  `"E019"` y ausencia de `cookieJar`)
+- Ajuste de higiene del repositorio: `.codex/` pasa a ignorarse en `.gitignore`
+- Sin cambios en API publica ni en comportamiento funcional de produccion de la libreria
+
 ## 6.0.7
 
 - Actualizacion de dependencia: OpenFeign de `13.9.3` a `13.11`
