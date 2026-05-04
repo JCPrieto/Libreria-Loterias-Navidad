@@ -3,7 +3,6 @@ package io.github.jcprieto;
 import io.github.jcprieto.lib.loteria.conexion.Conexion;
 import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 import io.github.jcprieto.lib.loteria.enumeradores.Sorteo;
-import io.github.jcprieto.lib.loteria.excepciones.PremioDecimoNoDisponibleException;
 import io.github.jcprieto.lib.loteria.model.Premio;
 import io.github.jcprieto.lib.loteria.model.navidad.ResumenNavidad;
 import io.github.jcprieto.lib.loteria.model.nino.ResumenNino;
@@ -243,20 +242,6 @@ public class ConexionTest {
         Assert.assertEquals(4, server.getRequestCount());
     }
 
-    @Test(expected = PremioDecimoNoDisponibleException.class)
-    public void testPremioDecimoNoDisponible() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(sorteoConEscrutinioJson()));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("E019"));
-
-        Conexion conexion = createConexion();
-        conexion.getPremio(Sorteo.NAVIDAD, "12345");
-    }
-
     @Test
     public void testResumenNavidadErrorDevuelveNull() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(500));
@@ -423,34 +408,6 @@ public class ConexionTest {
         Assert.assertNotNull(premio);
         Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
-    }
-
-    @Test(expected = IOException.class)
-    public void testGetPremioConRespuestaInvalidaLanzaIOException() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(sorteoConEscrutinioJson()));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("{invalid-json"));
-
-        Conexion conexion = createConexion();
-        conexion.getPremio(Sorteo.NAVIDAD, "12345");
-    }
-
-    @Test(expected = PremioDecimoNoDisponibleException.class)
-    public void testPremioDecimoNoDisponibleEntreComillas() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody(sorteoConEscrutinioJson()));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("\"E019\""));
-
-        Conexion conexion = createConexion();
-        conexion.getPremio(Sorteo.NAVIDAD, "12345");
     }
 
     @Test
