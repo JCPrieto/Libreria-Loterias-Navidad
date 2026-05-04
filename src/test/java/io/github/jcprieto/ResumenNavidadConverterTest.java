@@ -45,6 +45,65 @@ public class ResumenNavidadConverterTest {
     }
 
     @Test
+    public void testGetDesdePremiosSinNumerosDisponibles() {
+        Premios premios = new Premios();
+        premios.setNumero1(-1);
+        premios.setNumero2(-1);
+        premios.setNumero3(-1);
+        premios.setNumero4(-1);
+        premios.setNumero5(-1);
+        premios.setNumero6(-1);
+        premios.setNumero7(-1);
+        premios.setNumero8(-1);
+        premios.setNumero9(-1);
+        premios.setNumero10(-1);
+        premios.setNumero11(-1);
+        premios.setNumero12(-1);
+        premios.setNumero13(-1);
+
+        ResumenNavidad resumen = ResumenNavidadConverter.get(premios);
+
+        Assert.assertNull(resumen.getGordo());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+        Assert.assertTrue(resumen.getCuarto().isEmpty());
+        Assert.assertTrue(resumen.getQuinto().isEmpty());
+    }
+
+    @Test
+    public void testGetDesdePremiosConUnSoloCuartoDisponible() {
+        Premios premios = new Premios();
+        premios.setNumero4(4444);
+        premios.setNumero5(-1);
+        premios.setNumero6(-1);
+
+        ResumenNavidad resumen = ResumenNavidadConverter.get(premios);
+
+        Assert.assertEquals(1, resumen.getCuarto().size());
+        Assert.assertEquals("04444", resumen.getCuarto().getFirst());
+        Assert.assertTrue(resumen.getQuinto().isEmpty());
+    }
+
+    @Test
+    public void testGetDesdePremiosConTodosLosQuintosDisponibles() {
+        Premios premios = new Premios();
+        premios.setNumero6(6);
+        premios.setNumero7(7);
+        premios.setNumero8(8);
+        premios.setNumero9(9);
+        premios.setNumero10(10);
+        premios.setNumero11(11);
+        premios.setNumero12(12);
+        premios.setNumero13(13);
+
+        ResumenNavidad resumen = ResumenNavidadConverter.get(premios);
+
+        Assert.assertEquals(8, resumen.getQuinto().size());
+        Assert.assertEquals("00006", resumen.getQuinto().get(0));
+        Assert.assertEquals("00013", resumen.getQuinto().get(7));
+    }
+
+    @Test
     public void testGetDesdeSorteoNavidadResponse() {
         SorteoNavidadResponse sorteo = new SorteoNavidadResponse();
         sorteo.setFechaSorteo("2025-12-22 08:30:00");
@@ -72,6 +131,43 @@ public class ResumenNavidadConverterTest {
         Assert.assertEquals("/f/listado.pdf", resumen.getUrlPDF());
         Assert.assertEquals(EstadoSorteo.TERMINADO, resumen.getEstado());
         Assert.assertNotNull(resumen.getFechaActualizacion());
+    }
+
+    @Test
+    public void testGetDesdeSorteoNavidadResponseNullDevuelveResumenVacio() {
+        ResumenNavidad resumen = ResumenNavidadConverter.get("https://www.loteriasyapuestas.es", null);
+
+        Assert.assertNull(resumen.getGordo());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+        Assert.assertNull(resumen.getCuarto());
+        Assert.assertNull(resumen.getQuinto());
+        Assert.assertNull(resumen.getUrlPDF());
+        Assert.assertNull(resumen.getEstado());
+    }
+
+    @Test
+    public void testGetDesdeSorteoNavidadResponseConDatosOpcionalesAusentes() {
+        SorteoNavidadResponse sorteo = new SorteoNavidadResponse();
+        sorteo.setUrlListadoOficial("/f/listado.pdf");
+        sorteo.setTercerosPremios(List.of());
+        List<SorteoNavidadResponse.PremioDetalle> cuartos = new ArrayList<>();
+        cuartos.add(null);
+        cuartos.add(premio(null));
+        cuartos.add(premio("abc"));
+        sorteo.setCuartosPremios(cuartos);
+        sorteo.setQuintosPremios(null);
+
+        ResumenNavidad resumen = ResumenNavidadConverter.get(null, sorteo);
+
+        Assert.assertNull(resumen.getGordo());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+        Assert.assertTrue(resumen.getCuarto().isEmpty());
+        Assert.assertTrue(resumen.getQuinto().isEmpty());
+        Assert.assertEquals("/f/listado.pdf", resumen.getUrlPDF());
+        Assert.assertNull(resumen.getEstado());
+        Assert.assertNull(resumen.getFechaActualizacion());
     }
 
     @Test
