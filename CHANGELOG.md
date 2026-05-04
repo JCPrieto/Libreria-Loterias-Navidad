@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.0.9
+
+- Actualizacion de dependencias: OpenFeign de `13.11` a `13.12` y `jackson-databind` de `2.21.2` a `2.21.3`
+- Reorganizacion de tests de `Conexion`: los casos equivalentes de respuestas no procesables pasan a un test
+  parametrizado para eliminar duplicacion detectada por SonarQube
+- Ampliacion de tests unitarios de `ResumenNavidadConverter` para cubrir ramas de numeros no disponibles, datos
+  opcionales ausentes y recorrido completo de quintos premios
+- Sin cambios en API publica ni en comportamiento funcional de produccion de la libreria
+
 ## 6.0.8
 
 - Actualizacion de seguridad y mantenimiento: `jackson-databind` de `2.21.1` a `2.21.2`
