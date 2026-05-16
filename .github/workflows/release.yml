@@ -25,11 +25,6 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
-          server-id: central
-          server-username: MAVEN_CENTRAL_USERNAME
-          server-password: MAVEN_CENTRAL_PASSWORD
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: GPG_PASSPHRASE
       - name: Build package
         run: mvn -B package
       - name: Read version
@@ -44,13 +39,6 @@ jobs:
           else
             echo "exists=false" >> "$GITHUB_OUTPUT"
           fi
-      - name: Publish to Maven Central
-        if: steps.tag.outputs.exists == 'false' && !endsWith(steps.version.outputs.value, '-SNAPSHOT')
-        env:
-          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: mvn -B --no-transfer-progress -Prelease-sign deploy -DskipTests
       - name: Create GitHub release
         if: steps.tag.outputs.exists == 'false' && !endsWith(steps.version.outputs.value, '-SNAPSHOT')
         uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
