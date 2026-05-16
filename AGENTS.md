@@ -14,7 +14,8 @@
 - `mvn package` compiles and packages the library JAR.
 - `mvn verify -Pcoverage` runs tests and generates JaCoCo XML coverage (`target/site/jacoco/jacoco.xml`) for SonarQube
   analysis.
-- `mvn -Prelease-sign deploy` signs artifacts with GPG and publishes to Maven Central (manual/local release flow).
+- `mvn -Prelease-sign deploy` signs artifacts with GPG and publishes to Maven Central; this is used both for
+  manual/local releases and by the GitHub `Release` workflow.
 
 ## Coding Style & Naming Conventions
 
@@ -45,6 +46,8 @@
 - Dependencies are managed in `pom.xml`; prefer updating versions through existing Maven properties when available
   (for example `openfeign.version`) and keep `CHANGELOG.md` consistent with releases.
 - `.codex/` is local tooling state and is ignored by git; do not include it in release or source changes.
-- GPG signing is intentionally isolated in the `release-sign` profile to avoid requiring private keys in CI.
+- GPG signing is intentionally isolated in the `release-sign` profile. The GitHub `Release` workflow imports the
+  private key from repository secrets (`GPG_PRIVATE_KEY` and `GPG_PASSPHRASE`) and uses Maven Central credentials from
+  `MAVEN_CENTRAL_USERNAME` and `MAVEN_CENTRAL_PASSWORD`.
 - In GitHub Actions workflows, prefer pinning third-party actions to full commit SHA (instead of mutable tags) to
   satisfy security checks like SonarQube hotspots.

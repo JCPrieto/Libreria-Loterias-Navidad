@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.0.10
+
+- Actualizacion de mantenimiento: `slf4j-api` de `2.0.17` a `2.0.18`
+- Ampliacion del workflow de release para publicar tambien en Maven Central con el perfil `release-sign`, usando
+  credenciales y clave GPG desde secretos de GitHub Actions antes de crear la release de GitHub
+- Reorganizacion y ampliacion de tests unitarios de `Conexion`: se parametrizan los casos equivalentes sin `id_sorteo`
+  y se cubren ramas adicionales de warm-up, cache de premios, errores HTTP/runtime, JSON prefijado, cookies y parseo
+  defensivo
+- Sin cambios en API publica ni en comportamiento funcional de produccion de la libreria
+
 ## 6.0.9
 
 - Actualizacion de dependencias: OpenFeign de `13.11` a `13.12` y `jackson-databind` de `2.21.2` a `2.21.3`
