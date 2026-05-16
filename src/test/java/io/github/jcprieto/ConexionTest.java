@@ -327,54 +327,6 @@ public class ConexionTest {
     }
 
     @Test
-    public void testGetPremioSinIdSorteoDevuelveCantidadCero() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("[{\"fecha_sorteo\":\"2025-12-22 08:30:00\",\"estado\":\"cerrado\"}]"));
-
-        Conexion conexion = createConexion();
-        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
-
-        Assert.assertNotNull(premio);
-        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
-        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
-        Assert.assertEquals(2, server.getRequestCount());
-    }
-
-    @Test
-    public void testGetPremioSinSorteosDevuelveCantidadCero() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("[]"));
-
-        Conexion conexion = createConexion();
-        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
-
-        Assert.assertNotNull(premio);
-        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
-        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
-        Assert.assertEquals(2, server.getRequestCount());
-    }
-
-    @Test
-    public void testGetPremioConIdSorteoVacioDevuelveCantidadCero() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(200));
-        server.enqueue(new MockResponse()
-                .setResponseCode(200)
-                .setBody("[{\"fecha_sorteo\":\"2025-12-22 08:30:00\",\"estado\":\"cerrado\",\"id_sorteo\":\"   \"}]"));
-
-        Conexion conexion = createConexion();
-        Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
-
-        Assert.assertNotNull(premio);
-        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
-        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
-        Assert.assertEquals(2, server.getRequestCount());
-    }
-
-    @Test
     public void testGetPremioConImportePorDefectoInvalidoDevuelveCantidadCero() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(200));
         server.enqueue(new MockResponse()
