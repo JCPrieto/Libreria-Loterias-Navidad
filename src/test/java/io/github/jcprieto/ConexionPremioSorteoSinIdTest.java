@@ -22,10 +22,12 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class ConexionPremioSorteoSinIdTest {
 
+    private final String testName;
     private final String responseBody;
     private MockWebServer server;
 
     public ConexionPremioSorteoSinIdTest(String testName, String responseBody) {
+        this.testName = testName;
         this.responseBody = responseBody;
     }
 
@@ -59,10 +61,10 @@ public class ConexionPremioSorteoSinIdTest {
         Conexion conexion = createConexion();
         Premio premio = conexion.getPremio(Sorteo.NAVIDAD, "12345");
 
-        Assert.assertNotNull(premio);
-        Assert.assertEquals(BigDecimal.ZERO, premio.getCantidad());
-        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
-        Assert.assertEquals(2, server.getRequestCount());
+        Assert.assertNotNull(testName, premio);
+        Assert.assertEquals(testName, BigDecimal.ZERO, premio.getCantidad());
+        Assert.assertEquals(testName, EstadoSorteo.NO_INICIADO, premio.getEstado());
+        Assert.assertEquals(testName, 2, server.getRequestCount());
     }
 
     private Conexion createConexion() {
