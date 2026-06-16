@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.0.11
+
+- Actualizacion de mantenimiento: `jackson-databind` de `2.21.3` a `2.22.0`, `okhttp-jvm` y `mockwebserver` de
+  `5.3.2` a `5.4.0`, y `jacoco-maven-plugin` de `0.8.14` a `0.8.15`
+- Ajuste de `ConexionPremioSorteoSinIdTest` para conservar el nombre de cada caso parametrizado en los mensajes de
+  asercion y evitar parametros sin uso detectados por SonarQube
+- Ampliacion de tests unitarios de `ResumenNinoConverter` para cubrir respuestas nulas, URL base ausente y premios no
+  disponibles
+- Sin cambios en API publica ni en comportamiento funcional de produccion de la libreria
+
 ## 6.0.10
 
 - Actualizacion de mantenimiento: `slf4j-api` de `2.0.17` a `2.0.18`
