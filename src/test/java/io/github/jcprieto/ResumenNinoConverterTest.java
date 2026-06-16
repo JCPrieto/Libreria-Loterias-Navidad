@@ -83,6 +83,53 @@ public class ResumenNinoConverterTest {
     }
 
     @Test
+    public void testGetDesdeSorteoNavidadResponseNuloDevuelveResumenVacio() {
+        ResumenNino resumen = ResumenNinoConverter.get("https://www.loteriasyapuestas.es", null);
+
+        Assert.assertNull(resumen.getPrimero());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+        Assert.assertNull(resumen.getCuatroCifras());
+        Assert.assertNull(resumen.getTresCifras());
+        Assert.assertNull(resumen.getDosCifras());
+        Assert.assertNull(resumen.getReintegros());
+        Assert.assertNull(resumen.getUrlPDF());
+        Assert.assertNull(resumen.getEstado());
+        Assert.assertNull(resumen.getFechaActualizacion());
+    }
+
+    @Test
+    public void testGetDesdeSorteoNavidadResponseSinPremiosUsaUrlBaseVacia() {
+        SorteoNavidadResponse sorteo = new SorteoNavidadResponse();
+        sorteo.setUrlListadoOficial("/f/listado.pdf");
+
+        ResumenNino resumen = ResumenNinoConverter.get(null, sorteo);
+
+        Assert.assertNull(resumen.getPrimero());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+        Assert.assertTrue(resumen.getCuatroCifras().isEmpty());
+        Assert.assertTrue(resumen.getTresCifras().isEmpty());
+        Assert.assertTrue(resumen.getDosCifras().isEmpty());
+        Assert.assertTrue(resumen.getReintegros().isEmpty());
+        Assert.assertEquals("/f/listado.pdf", resumen.getUrlPDF());
+    }
+
+    @Test
+    public void testGetDesdePremiosConPremiosNoDisponibles() {
+        Premios premios = new Premios();
+        premios.setPremio1(-1);
+        premios.setPremio2(-1);
+        premios.setPremio3(-1);
+
+        ResumenNino resumen = ResumenNinoConverter.get(premios);
+
+        Assert.assertNull(resumen.getPrimero());
+        Assert.assertNull(resumen.getSegundo());
+        Assert.assertNull(resumen.getTercero());
+    }
+
+    @Test
     public void testGetDesdePremiosConExtraccionesNulas() {
         Premios premios = new Premios();
         premios.setPremio1(1);
