@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -848,7 +849,7 @@ public class ConexionTest {
     }
 
     private String getUltimoSeisEnero() {
-        LocalDate ahora = LocalDate.now();
+        LocalDate ahora = LocalDate.now(Clock.systemDefaultZone());
         int year = ahora.getYear();
         LocalDate fechaSorteo = LocalDate.of(year, Month.JANUARY, 6);
         if (ahora.isBefore(fechaSorteo)) {
@@ -858,7 +859,7 @@ public class ConexionTest {
     }
 
     private String getUltimoVeintidosDiciembre() {
-        LocalDate ahora = LocalDate.now();
+        LocalDate ahora = LocalDate.now(Clock.systemDefaultZone());
         int year = ahora.getYear();
         LocalDate fechaSorteo = LocalDate.of(year, Month.DECEMBER, 22);
         if (ahora.isBefore(fechaSorteo)) {
