@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -108,7 +109,7 @@ public class Conexion {
     }
 
     private static String getUltimaFecha(Month month, int dayOfMonth) {
-        LocalDate ahora = LocalDate.now();
+        LocalDate ahora = LocalDate.now(Clock.systemDefaultZone());
         int year = ahora.getYear();
         LocalDate fechaSorteo = LocalDate.of(year, month, dayOfMonth);
         if (ahora.isBefore(fechaSorteo)) {
