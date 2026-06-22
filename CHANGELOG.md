@@ -1,5 +1,15 @@
 # Changelog
 
+## 6.0.12
+
+- Actualizacion de mantenimiento: OpenFeign de `13.12` a `13.13` y `central-publishing-maven-plugin` de `0.10.0` a
+  `0.11.0`
+- Ajuste interno en `Conexion`: el calculo de la ultima fecha de sorteo usa explicitamente
+  `Clock.systemDefaultZone()`, manteniendo el mismo comportamiento con la zona horaria por defecto del sistema
+- Ampliacion de tests unitarios de `PremioConverter` para cubrir el caso de premio cero con importe por defecto valido
+  detectado por SonarQube
+- Sin cambios en API publica ni en comportamiento funcional de produccion de la libreria
+
 ## 6.0.11
 
 - Actualizacion de mantenimiento: `jackson-databind` de `2.21.3` a `2.22.0`, `okhttp-jvm` y `mockwebserver` de
