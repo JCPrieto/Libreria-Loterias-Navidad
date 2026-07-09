@@ -73,8 +73,7 @@ public class ResumenNavidadConverter {
     private static void setFechaActualizacion(String fechaSorteo, ResumenNavidad resumen) {
         SorteoResponseConverterUtils.setFechaActualizacion(
                 fechaSorteo,
-                resumen::setFechaActualizacion,
-                resumen::setFechaActualizacionAndroid
+                resumen::setFechaActualizacion
         );
     }
 

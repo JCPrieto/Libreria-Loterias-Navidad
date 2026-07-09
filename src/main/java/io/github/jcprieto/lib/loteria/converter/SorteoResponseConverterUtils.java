@@ -5,8 +5,6 @@ import io.github.jcprieto.lib.loteria.model.json.navidad.SorteoNavidadResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -81,20 +79,12 @@ public final class SorteoResponseConverterUtils {
         return resultado;
     }
 
-    public static void setFechaActualizacion(String fechaSorteo, Consumer<LocalDateTime> localSetter,
-                                             Consumer<Date> dateSetter) {
+    public static void setFechaActualizacion(String fechaSorteo, Consumer<LocalDateTime> localSetter) {
         if (fechaSorteo == null) {
             return;
         }
         try {
             localSetter.accept(LocalDateTime.parse(fechaSorteo.replace(' ', 'T')));
-        } catch (NoClassDefFoundError n) {
-            try {
-                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ROOT).parse(fechaSorteo);
-                dateSetter.accept(date);
-            } catch (ParseException e) {
-                LOG.error("Formato de fecha no valido: {}", fechaSorteo, e);
-            }
         } catch (RuntimeException e) {
             LOG.error("Error al parsear fecha: {}", fechaSorteo, e);
         }

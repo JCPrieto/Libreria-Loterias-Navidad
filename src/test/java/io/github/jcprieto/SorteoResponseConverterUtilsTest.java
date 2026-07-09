@@ -106,7 +106,7 @@ public class SorteoResponseConverterUtilsTest {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
         AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion(null, local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion(null, local::set);
 
         Assert.assertNull(local.get());
         Assert.assertNull(legacy.get());
@@ -117,7 +117,7 @@ public class SorteoResponseConverterUtilsTest {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
         AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion("2025-12-22 08:30:00", local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion("2025-12-22 08:30:00", local::set);
 
         Assert.assertEquals(LocalDateTime.of(2025, 12, 22, 8, 30, 0), local.get());
         Assert.assertNull(legacy.get());
@@ -128,7 +128,7 @@ public class SorteoResponseConverterUtilsTest {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
         AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion("2025/12/22", local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion("2025/12/22", local::set);
 
         Assert.assertNull(local.get());
         Assert.assertNull(legacy.get());
@@ -142,8 +142,7 @@ public class SorteoResponseConverterUtilsTest {
                 "2025-12-22 08:30:00",
                 ignored -> {
                     throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
+                }
         );
 
         Assert.assertNotNull(legacy.get());
@@ -157,8 +156,7 @@ public class SorteoResponseConverterUtilsTest {
                 "22/12/2025",
                 ignored -> {
                     throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
+                }
         );
 
         Assert.assertNull(legacy.get());
