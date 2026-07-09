@@ -43,19 +43,16 @@ public class SorteoResponseConverterUtilsTest {
     @Test
     public void testSetFechaActualizacionFromTimestamp() {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
         long timestamp = 1700000000L;
 
         SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
                 timestamp,
-                local::set,
-                legacy::set
+                local::set
         );
 
         LocalDateTime esperado = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
                 ZoneId.of("Europe/Madrid"));
         Assert.assertEquals(esperado, local.get());
-        Assert.assertNull(legacy.get());
     }
 
     @Test
@@ -104,79 +101,28 @@ public class SorteoResponseConverterUtilsTest {
     @Test
     public void testSetFechaActualizacionConFechaNulaNoHaceNada() {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion(null, local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion(null, local::set);
 
         Assert.assertNull(local.get());
-        Assert.assertNull(legacy.get());
     }
 
     @Test
     public void testSetFechaActualizacionConFormatoValidoSeteaLocalDateTime() {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion("2025-12-22 08:30:00", local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion("2025-12-22 08:30:00", local::set);
 
         Assert.assertEquals(LocalDateTime.of(2025, 12, 22, 8, 30, 0), local.get());
-        Assert.assertNull(legacy.get());
     }
 
     @Test
     public void testSetFechaActualizacionConFormatoInvalidoNoSeteaCampos() {
         AtomicReference<LocalDateTime> local = new AtomicReference<>();
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
 
-        SorteoResponseConverterUtils.setFechaActualizacion("2025/12/22", local::set, legacy::set);
+        SorteoResponseConverterUtils.setFechaActualizacion("2025/12/22", local::set);
 
         Assert.assertNull(local.get());
-        Assert.assertNull(legacy.get());
-    }
-
-    @Test
-    public void testSetFechaActualizacionConFallbackLegacyCuandoFallaLocalDateTime() {
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
-
-        SorteoResponseConverterUtils.setFechaActualizacion(
-                "2025-12-22 08:30:00",
-                ignored -> {
-                    throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
-        );
-
-        Assert.assertNotNull(legacy.get());
-    }
-
-    @Test
-    public void testSetFechaActualizacionConFallbackLegacyYFormatoInvalido() {
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
-
-        SorteoResponseConverterUtils.setFechaActualizacion(
-                "22/12/2025",
-                ignored -> {
-                    throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
-        );
-
-        Assert.assertNull(legacy.get());
-    }
-
-    @Test
-    public void testSetFechaActualizacionFromTimestampFallbackLegacyCuandoFallaLocalDateTime() {
-        AtomicReference<java.util.Date> legacy = new AtomicReference<>();
-
-        SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
-                1700000000L,
-                ignored -> {
-                    throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
-        );
-
-        Assert.assertNotNull(legacy.get());
     }
 
     private SorteoNavidadResponse.PremioDetalle premio(String decimo) {

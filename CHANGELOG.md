@@ -1,5 +1,19 @@
 # Changelog
 
+## 7.0.0
+
+- Cambio rompedor: se elimina el soporte legacy de fechas de actualizacion basadas en `java.util.Date` para Android.
+  Las fechas de actualizacion se exponen y calculan unicamente como `LocalDateTime`.
+- Eliminados los accesores `getFechaActualizacionAndroid()` y `setFechaActualizacionAndroid(...)` de `Premio`,
+  `ResumenNavidad` y `ResumenNino`.
+- Simplificados los convertidores de premios y resumenes para usar directamente `LocalDateTime`, eliminando el fallback
+  interno que capturaba `NoClassDefFoundError`.
+- Cambio rompedor en `SorteoResponseConverterUtils`: los metodos de fecha ya no reciben `Consumer<Date>` y solo aceptan
+  el setter de `LocalDateTime`.
+- Actualizacion de mantenimiento: `jackson-databind` de `2.22.0` a `2.22.1`.
+- Ampliacion y ajuste de tests unitarios de `PremioConverter` y `SorteoResponseConverterUtils` para reflejar el nuevo
+  contrato sin fallback legacy.
+
 ## 6.0.12
 
 - Actualizacion de mantenimiento: OpenFeign de `13.12` a `13.13` y `central-publishing-maven-plugin` de `0.10.0` a

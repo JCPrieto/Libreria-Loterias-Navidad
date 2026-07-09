@@ -43,6 +43,8 @@
 ## Configuration & Compatibility Notes
 
 - Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
+- `LocalDateTime` is the supported type for update dates; do not reintroduce legacy `java.util.Date`/Android fallback
+  fields or converter paths unless a new compatibility requirement explicitly calls for it.
 - Dependencies are managed in `pom.xml`; prefer updating versions through existing Maven properties when available
   (for example `openfeign.version`) and keep `CHANGELOG.md` consistent with releases.
 - `.codex/` is local tooling state and is ignored by git; do not include it in release or source changes.

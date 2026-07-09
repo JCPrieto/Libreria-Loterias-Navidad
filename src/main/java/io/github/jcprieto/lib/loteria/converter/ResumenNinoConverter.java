@@ -66,16 +66,14 @@ public class ResumenNinoConverter {
     private static void setFechaActualizacion(Premios premios, ResumenNino resumen) {
         SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
                 premios.getTimestamp(),
-                resumen::setFechaActualizacion,
-                resumen::setFechaActualizacionAndroid
+                resumen::setFechaActualizacion
         );
     }
 
     private static void setFechaActualizacion(String fechaSorteo, ResumenNino resumen) {
         SorteoResponseConverterUtils.setFechaActualizacion(
                 fechaSorteo,
-                resumen::setFechaActualizacion,
-                resumen::setFechaActualizacionAndroid
+                resumen::setFechaActualizacion
         );
     }
 

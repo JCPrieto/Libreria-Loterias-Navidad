@@ -9,7 +9,6 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
 
 public class PremioConverter {
 
@@ -51,18 +50,11 @@ public class PremioConverter {
     }
 
     private static void setFechaActualizacionFromTimestamp(long timestamp, Premio premio) {
-        try {
-            premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
-                    MADRID_ZONE));
-        } catch (NoClassDefFoundError n) {
-            Calendar date = Calendar.getInstance();
-            date.setTimeInMillis(timestamp * 1000L);
-            premio.setFechaActualizacionAndroid(date.getTime());
-        }
+        premio.setFechaActualizacion(LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
+                MADRID_ZONE));
     }
 
     private static void setFechaActualizacionFromSorteo(String fechaSorteo, Premio premio) {
-        SorteoResponseConverterUtils.setFechaActualizacion(fechaSorteo, premio::setFechaActualizacion,
-                premio::setFechaActualizacionAndroid);
+        SorteoResponseConverterUtils.setFechaActualizacion(fechaSorteo, premio::setFechaActualizacion);
     }
 }
