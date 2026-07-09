@@ -48,8 +48,7 @@ public class SorteoResponseConverterUtilsTest {
 
         SorteoResponseConverterUtils.setFechaActualizacionFromTimestamp(
                 timestamp,
-                local::set,
-                legacy::set
+                local::set
         );
 
         LocalDateTime esperado = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),
@@ -170,8 +169,7 @@ public class SorteoResponseConverterUtilsTest {
                 1700000000L,
                 ignored -> {
                     throw new NoClassDefFoundError("java.time.LocalDateTime");
-                },
-                legacy::set
+                }
         );
 
         Assert.assertNotNull(legacy.get());

@@ -2,13 +2,14 @@ package io.github.jcprieto.lib.loteria.model.navidad;
 
 import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class ResumenNavidad implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4536837407643098849L;
     private String gordo;
     private String segundo;
@@ -18,7 +19,6 @@ public class ResumenNavidad implements Serializable {
     private LocalDateTime fechaActualizacion;
     private String urlPDF;
     private EstadoSorteo estado;
-    private Date fechaActualizacionAndroid;
 
     public String getGordo() {
         return gordo;
@@ -84,11 +84,4 @@ public class ResumenNavidad implements Serializable {
         this.estado = estado;
     }
 
-    public Date getFechaActualizacionAndroid() {
-        return fechaActualizacionAndroid;
-    }
-
-    public void setFechaActualizacionAndroid(Date fechaActualizacionAndroid) {
-        this.fechaActualizacionAndroid = fechaActualizacionAndroid;
-    }
 }
