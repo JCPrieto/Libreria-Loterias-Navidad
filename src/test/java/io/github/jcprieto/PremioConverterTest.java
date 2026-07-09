@@ -45,6 +45,22 @@ public class PremioConverterTest {
     }
 
     @Test
+    public void testGetDesdeBusquedaConPremioNegativo() {
+        Busqueda busqueda = new Busqueda();
+        busqueda.setPremio(-2000);
+        busqueda.setTimestamp(0L);
+        busqueda.setStatus(0);
+
+        Premio premio = PremioConverter.get(busqueda);
+
+        Assert.assertEquals(new BigDecimal("-100"), premio.getCantidad());
+        Assert.assertEquals(EstadoSorteo.NO_INICIADO, premio.getEstado());
+        LocalDateTime esperado = LocalDateTime.ofInstant(Instant.ofEpochSecond(0L),
+                ZoneId.of("Europe/Madrid"));
+        Assert.assertEquals(esperado, premio.getFechaActualizacion());
+    }
+
+    @Test
     public void testGetDesdeSorteo() {
         Premio premio = PremioConverter.get("cerrado", "2025-12-22 08:30:00", 12000L, 200);
 
@@ -85,5 +101,14 @@ public class PremioConverterTest {
         Premio premio = PremioConverter.get("cerrado", "2025-12-22 08:30:00", 1L, 3);
 
         Assert.assertEquals(new BigDecimal("0.33333333"), premio.getCantidad());
+    }
+
+    @Test
+    public void testGetDesdeSorteoConEstadoYFechaNulos() {
+        Premio premio = PremioConverter.get(null, null, 12000L, 200);
+
+        Assert.assertEquals(new BigDecimal("60"), premio.getCantidad());
+        Assert.assertNull(premio.getEstado());
+        Assert.assertNull(premio.getFechaActualizacion());
     }
 }
