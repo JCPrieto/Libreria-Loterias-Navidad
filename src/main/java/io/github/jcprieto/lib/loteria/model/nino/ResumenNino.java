@@ -2,13 +2,14 @@ package io.github.jcprieto.lib.loteria.model.nino;
 
 import io.github.jcprieto.lib.loteria.enumeradores.EstadoSorteo;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class ResumenNino implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8842164079641350214L;
     private String primero;
     private String segundo;
@@ -20,7 +21,6 @@ public class ResumenNino implements Serializable {
     private LocalDateTime fechaActualizacion;
     private String urlPDF;
     private EstadoSorteo estado;
-    private Date fechaActualizacionAndroid;
 
     public String getPrimero() {
         return primero;
@@ -100,13 +100,5 @@ public class ResumenNino implements Serializable {
 
     public void setEstado(EstadoSorteo estado) {
         this.estado = estado;
-    }
-
-    public Date getFechaActualizacionAndroid() {
-        return fechaActualizacionAndroid;
-    }
-
-    public void setFechaActualizacionAndroid(Date fechaActualizacionAndroid) {
-        this.fechaActualizacionAndroid = fechaActualizacionAndroid;
     }
 }
