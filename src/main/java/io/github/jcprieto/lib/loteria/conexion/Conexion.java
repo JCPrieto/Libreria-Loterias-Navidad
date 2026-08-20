@@ -140,8 +140,7 @@ public class Conexion {
         if (cookieJar == null) {
             return null;
         }
-        String cookieHeader = cookieJar.getCookieHeader();
-        return cookieHeader == null || cookieHeader.isBlank() ? null : cookieHeader;
+        return cookieJar.getCookieHeader();
     }
 
     private static <T> T getFirstOrNull(List<T> items) {

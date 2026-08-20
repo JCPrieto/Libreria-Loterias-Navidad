@@ -722,6 +722,7 @@ public class ConexionTest {
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        // Intentionally discard cookies to simulate an empty external cookie jar.
                     }
 
                     @Override

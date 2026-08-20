@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 
 public class PremioConverterTest {
@@ -66,7 +67,7 @@ public class PremioConverterTest {
 
         Assert.assertEquals(new BigDecimal("60"), premio.getCantidad());
         Assert.assertEquals(EstadoSorteo.TERMINADO, premio.getEstado());
-        Assert.assertEquals(LocalDateTime.of(2025, 12, 22, 8, 30, 0), premio.getFechaActualizacion());
+        Assert.assertEquals(LocalDateTime.of(2025, Month.DECEMBER, 22, 8, 30, 0), premio.getFechaActualizacion());
     }
 
     @Test

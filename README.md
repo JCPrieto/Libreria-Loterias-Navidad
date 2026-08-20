@@ -9,6 +9,8 @@ Actualmente, esta librería está en uso en dos aplicaciones de mi repositorio: 
 
 Cliente HTTP: OpenFeign + OkHttp.
 
+Requisito de ejecución: Java 25 o superior.
+
 ### Uso ###
 
 Ejemplo básico con timeouts y `OkHttpClient` propio:
@@ -121,14 +123,14 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-    <version>6.0.12</version>
+    <version>8.0.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```gradle
-implementation "io.github.jcprieto:loteria-navidad:6.0.12"
+implementation "io.github.jcprieto:loteria-navidad:8.0.0"
 ```
 
 ### Changelog ###

@@ -4,7 +4,7 @@
 
 - `src/main/java/io/github/jcprieto/lib/loteria/` contains the library code (API connection, models, converters, enums).
 - `src/test/java/io/github/jcprieto/` contains JUnit 4 tests.
-- `pom.xml` defines Maven build config, Java 21 toolchain, and dependencies.
+- `pom.xml` defines Maven build config, Java 25 toolchain, and dependencies.
 - `target/` is Maven build output (generated).
 
 ## Build, Test, and Development Commands
@@ -42,7 +42,9 @@
 
 ## Configuration & Compatibility Notes
 
-- Java 21 is the target runtime (`maven.compiler.source`/`target` in `pom.xml`).
+- Java 25 is the minimum build and runtime version (`maven.compiler.release` in `pom.xml`); published bytecode is not
+  compatible with earlier Java runtimes.
+- GitHub Actions uses Eclipse Temurin 25 consistently for CI, SonarQube analysis, and releases.
 - `LocalDateTime` is the supported type for update dates; do not reintroduce legacy `java.util.Date`/Android fallback
   fields or converter paths unless a new compatibility requirement explicitly calls for it.
 - Dependencies are managed in `pom.xml`; prefer updating versions through existing Maven properties when available

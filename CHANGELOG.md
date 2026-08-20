@@ -1,5 +1,17 @@
 # Changelog
 
+## 8.0.0
+
+- Cambio rompedor: Java 25 pasa a ser la version minima para compilar y ejecutar la libreria; los artefactos publicados
+  ya no son compatibles con runtimes Java 21.
+- Actualizados a Java 25 los workflows de CI, analisis de SonarQube y generacion de releases.
+- Actualizaciones de mantenimiento: `jackson-databind` de `2.22.1` a `2.22.2`, y `okhttp-jvm` y `mockwebserver` de
+  `5.4.0` a `5.5.0`.
+- Simplificada la obtencion de la cabecera de cookies interna eliminando una condicion redundante e inalcanzable, sin
+  cambios en el comportamiento funcional.
+- Ajustes menores en tests para documentar el `CookieJar` deliberadamente vacio y mejorar la legibilidad de una fecha
+  mediante `Month.DECEMBER`.
+
 ## 7.0.0
 
 - Cambio rompedor: se elimina el soporte legacy de fechas de actualizacion basadas en `java.util.Date` para Android.
