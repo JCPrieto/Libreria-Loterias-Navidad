@@ -2,6 +2,7 @@
 
 ## 7.0.0
 
+- Cambio rompedor: Java 25 pasa a ser la version minima para compilar, probar, ejecutar y publicar la libreria.
 - Cambio rompedor: se elimina el soporte legacy de fechas de actualizacion basadas en `java.util.Date` para Android.
   Las fechas de actualizacion se exponen y calculan unicamente como `LocalDateTime`.
 - Eliminados los accesores `getFechaActualizacionAndroid()` y `setFechaActualizacionAndroid(...)` de `Premio`,

@@ -9,6 +9,8 @@ Actualmente, esta librería está en uso en dos aplicaciones de mi repositorio: 
 
 Cliente HTTP: OpenFeign + OkHttp.
 
+Requisito de ejecución: Java 25 o superior.
+
 ### Uso ###
 
 Ejemplo básico con timeouts y `OkHttpClient` propio:
