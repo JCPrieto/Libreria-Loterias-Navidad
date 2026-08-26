@@ -95,7 +95,7 @@
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.source>25</maven.compiler.source>
-        <openfeign.version>13.13</openfeign.version>
+        <openfeign.version>13.14</openfeign.version>
         <sonar.organization>jcprieto</sonar.organization>
     </properties>
     <dependencies>
