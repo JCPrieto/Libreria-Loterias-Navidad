@@ -1,5 +1,11 @@
 # Changelog
 
+## 8.0.1
+
+- Actualizacion de mantenimiento: OpenFeign de `13.13` a `13.14`, `slf4j-api` de `2.0.18` a `2.0.19` y
+  `maven-compiler-plugin` de `3.15.0` a `3.16.0`.
+- Sin cambios en la API publica ni en el comportamiento funcional esperado de la libreria.
+
 ## 8.0.0
 
 - Cambio rompedor: Java 25 pasa a ser la version minima para compilar y ejecutar la libreria; los artefactos publicados
