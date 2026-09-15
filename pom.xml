@@ -33,7 +33,7 @@
 
     <groupId>io.github.jcprieto</groupId>
     <artifactId>loteria-navidad</artifactId>
-    <version>8.0.0</version>
+    <version>8.0.1</version>
     <packaging>jar</packaging>
     <build>
         <testSourceDirectory>src/test/java/</testSourceDirectory>
@@ -41,7 +41,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.15.0</version>
+                <version>3.16.0</version>
                 <configuration>
                     <release>${maven.compiler.release}</release>
                 </configuration>
@@ -95,14 +95,14 @@
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.source>25</maven.compiler.source>
-        <openfeign.version>13.13</openfeign.version>
+        <openfeign.version>13.14</openfeign.version>
         <sonar.organization>jcprieto</sonar.organization>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.18</version>
+            <version>2.0.19</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
