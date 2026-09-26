@@ -123,7 +123,7 @@ Maven:
 <dependency>
   <groupId>io.github.jcprieto</groupId>
   <artifactId>loteria-navidad</artifactId>
-    <version>8.0.1</version>
+    <version>8.0.2</version>
 </dependency>
 ```
 

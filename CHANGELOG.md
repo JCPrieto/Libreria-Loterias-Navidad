@@ -1,5 +1,11 @@
 # Changelog
 
+## 8.0.2
+
+- Actualizacion de mantenimiento: OpenFeign (`feign-core`, `feign-jackson` y `feign-okhttp`) de `13.14` a `13.15`,
+  manteniendo alineados los tres modulos mediante `openfeign.version`.
+- Sin cambios en la API publica ni en el comportamiento funcional esperado; se mantiene Java 25 como version minima.
+
 ## 8.0.1
 
 - Actualizacion de mantenimiento: OpenFeign de `13.13` a `13.14`, `slf4j-api` de `2.0.18` a `2.0.19` y
