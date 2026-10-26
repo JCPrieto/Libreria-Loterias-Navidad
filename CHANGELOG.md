@@ -1,5 +1,13 @@
 # Changelog
 
+## 8.0.3
+
+- Actualizacion de mantenimiento: `jackson-databind` de `2.22.2` a `2.22.4`, OpenFeign de `13.15` a `13.17`
+  y `slf4j-api` de `2.0.19` a `2.0.20`.
+- Actualizado `central-publishing-maven-plugin` de `0.11.0` a `0.12.0`.
+- Alineados los ejemplos de Maven y Gradle del README con la version `8.0.3`.
+- Sin cambios en la API publica; se mantiene Java 25 como version minima.
+
 ## 8.0.2
 
 - Actualizacion de mantenimiento: OpenFeign (`feign-core`, `feign-jackson` y `feign-okhttp`) de `13.14` a `13.15`,
